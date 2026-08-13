@@ -33,7 +33,7 @@
 ### 1. 获取源码
 
 ```bash
-git clone https://github.com/your-username/shiinamahiru-site.git
+git clone https://github.com/myqf1458/zhenzhou_site
 cd shiinamahiru-site
 ```
 
