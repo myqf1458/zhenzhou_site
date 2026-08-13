@@ -34,7 +34,7 @@
 
 ```bash
 git clone https://github.com/myqf1458/zhenzhou_site
-cd shiinamahiru-site
+cd zhenzhou_site
 ```
 
 ### 2. 配置 Web 服务器
