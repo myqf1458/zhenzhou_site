@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>赞赏支持</title>
+<link rel="icon" href="img/favicon.png" type="image/jpeg">
+<link rel="shortcut icon" href="img/favicon.png" type="image/jpeg">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Microsoft YaHei",system-ui}
+body{
+width:100vw;height:100vh;
+position:relative;
+transform:translateZ(0);
+-webkit-transform:translateZ(0);
+display:flex;
+align-items:center;
+justify-content:center;
+padding:20px;
+}
+body::before{
+content:"";
+position:fixed;
+inset:0;
+background:url('https://api.yppp.net/api.php') center/cover no-repeat;
+z-index:-1;
+transform:translateZ(-1px);
+-webkit-transform:translateZ(-1px);
+filter: brightness(0.75);
+}
+.container{
+width:100%;
+max-width:600px;
+text-align:center;
+color:#ffffff;
+}
+.title{
+font-size:32px;
+letter-spacing:3px;
+margin-bottom:16px;
+}
+.desc{
+font-size:16px;
+opacity:0.85;
+line-height:1.7;
+margin-bottom:36px;
+}
+.qr-wrap{
+display:flex;
+gap:32px;
+justify-content:center;
+flex-wrap:wrap;
+margin-bottom:40px;
+}
+.qr-item{
+width:210px;
+}
+.qr-box{
+width:100%;
+aspect-ratio:1/1;
+background:#ffffff;
+border-radius:18px;
+display:flex;
+align-items:center;
+justify-content:center;
+overflow:hidden;
+margin-bottom:12px;
+}
+.qr-box img{
+width:90%;
+height:90%;
+object-fit:contain;
+filter: brightness(1.05);
+}
+.qr-label{
+font-size:15px;
+opacity:0.9;
+}
+.thanks-text{
+font-size:15px;
+opacity:0.8;
+line-height:1.8;
+margin-bottom:12px;
+}
+.bottom-tip{
+font-size:13px;
+opacity:0.65;
+line-height:1.6;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h2 class="title">赞赏支持</h2>
+<p class="desc">您的每一份善意与投喂，都是站点长久更新前行的动力，所有赞赏完全自愿</p>
+<div class="qr-wrap">
+<div class="qr-item">
+<div class="qr-box">
+<div style="display:flex;align-items:center;justify-content:center;width:90%;height:90%;color:#999;font-size:13px;text-align:center;">请替换为<br>微信收款码</div>
+</div>
+<div class="qr-label">微信扫码赞赏</div>
+</div>
+<div class="qr-item">
+<div class="qr-box">
+<div style="display:flex;align-items:center;justify-content:center;width:90%;height:90%;color:#999;font-size:13px;text-align:center;">请替换为<br>支付宝收款码</div>
+</div>
+<div class="qr-label">支付宝扫码赞赏</div>
+</div>
+</div>
+<p class="thanks-text">由衷感谢每一位愿意伸出援手的朋友。</p>
+<p class="thanks-text">无论是小额的心意，还是默默浏览陪伴，对我而言都弥足珍贵。</p>
+<p class="thanks-text">我会带着这份支持，持续维护站点，完善更多功能与内容，不辜负大家的期待。</p>
+<p class="bottom-tip">温馨提示：赞赏属于自愿行为，请勿大额重复支付，有问题可联系站长处理</p>
+</div>
+</body>
+</html>

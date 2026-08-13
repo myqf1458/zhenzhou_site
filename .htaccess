@@ -1,0 +1,88 @@
+# ============================================================
+# 网站安全防护规则
+# ============================================================
+
+# 禁止目录列表
+Options -Indexes
+
+# ============================================================
+# 1. 保护敏感配置文件（禁止外部直接访问）
+# ============================================================
+<FilesMatch "^(db_config\.php|db\.php|admin_security\.php|qq_oauth_config\.php|\.env|\.htaccess|bangumi\.sql|community\.sql|user\.sql)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# 保护所有 SQL 文件
+<FilesMatch "\.(sql)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# 保护日志文件
+<FilesMatch "\.(log)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# 保护 JSON 数据文件（非接口）
+<FilesMatch "\.(json)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# ============================================================
+# 2. 隐藏服务器版本信息
+# ============================================================
+ServerSignature Off
+ServerTokens Prod
+
+# ============================================================
+# 3. 安全响应头
+# ============================================================
+<IfModule mod_headers.c>
+    # 防止 MIME 类型嗅探
+    Header always set X-Content-Type-Options "nosniff"
+    # 防止点击劫持
+    Header always set X-Frame-Options "SAMEORIGIN"
+    # XSS 保护
+    Header always set X-XSS-Protection "1; mode=block"
+    # Referrer 策略（仅同源发送，防止信息泄露）
+    Header always set Referrer-Policy "same-origin"
+    # 禁用不必要的 HSTS（如需启用请取消注释，需确保全站 HTTPS）
+    # Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    # 权限策略
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+</IfModule>
+
+# ============================================================
+# 4. 防盗链（保护图片资源，自动允许同源域名）
+# ============================================================
+RewriteEngine On
+RewriteCond %{HTTP_REFERER} !^$
+# 允许当前站点自身域名（含 www 与不含 www 两种形式）
+RewriteCond %{HTTP_HOST} ^(?:www\.|)(.+)$
+RewriteCond %{HTTP_REFERER} !^https?://(www\.|)%1/ [NC]
+RewriteRule \.(jpg|jpeg|png|gif|webp|svg|ico|mp3|mp4)$ - [F,L]
+
+# ============================================================
+# 5. 阻止恶意 User-Agent
+# ============================================================
+RewriteEngine On
+RewriteCond %{HTTP_USER_AGENT} (libwww-perl|wget|python|curl|nikto|scan|sqlmap|nmap|acunetix) [NC]
+RewriteRule ^ - [F,L]
+
+# ============================================================
+# 6. 限制请求体大小（防止大文件上传攻击，10MB）
+# ============================================================
+LimitRequestBody 10485760
+
+# ============================================================
+# 7. 防止 PHP 文件被直接访问（仅允许引用）
+# ============================================================
+# 已通过 FilesMatch 在第 1 部分保护配置文件
+
+# ============================================================
+# 8. 默认字符集
+# ============================================================
+AddDefaultCharset utf-8

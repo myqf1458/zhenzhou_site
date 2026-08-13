@@ -1,0 +1,3994 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>真昼小站</title>
+    <link rel="icon" href="img/favicon.png" type="image/jpeg">
+    <link rel="shortcut icon" href="img/favicon.png" type="image/jpeg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 64px;
+        }
+        body {
+            margin: 0;
+            padding-top: 64px;
+            transition: opacity 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        body.lang-switching {
+            opacity: 0;
+        }
+        .navbar{
+            background: rgba(255,255,255,0.72);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            padding:0 16px;
+            height:64px;
+            position:fixed;
+            top:0;
+            left:0;
+            right:0;
+            width:100%;
+            max-width:none;
+            margin:0;
+            z-index:999;
+        }
+        .navbar-left-wrap{
+            display:flex;
+            align-items:center;
+            gap:10px;
+        }
+        .logo img{
+            width:40px;
+            height:40px;
+            border-radius:50%;
+            object-fit:cover;
+        }
+        .site-name{
+            font-size:18px;
+            font-weight:bold;
+            color:#333;
+        }
+        .hamburger{
+            cursor:pointer;
+            display:none;
+            align-items:center;
+            justify-content:center;
+            padding:6px 10px;
+            border-radius:8px;
+            transition: background 0.2s, all 0.25s ease;
+        }
+        .hamburger:hover{
+            background: rgba(80,128,238,0.12);
+        }
+        .hamburger:active{
+            transform: scale(0.95);
+        }
+        .hamburger img{
+            display:block;
+            width:24px;
+            height:24px;
+        }
+        .menu{
+            display:flex;
+            align-items:center;
+            gap:16px;
+            position:relative;
+            flex-wrap:nowrap;
+        }
+        .menu > div{
+            position:relative;
+            display:inline-flex;
+            align-items:center;
+        }
+        /* 含子菜单的容器（关于、语言）内部的 <a> 不改变 flex 方向 */
+        .menu a i.fa-solid,
+        .menu a i.fas,
+        .menu a i.far,
+        .menu a i.fab{
+            width:24px;
+            height:24px;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            font-size:18px;
+        }
+        .menu a{
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+            text-decoration:none;
+            color:#333;
+            padding:6px 10px;
+            border-radius:10px;
+            transition: all 0.25s ease;
+            white-space:nowrap;
+            flex-shrink:0;
+        }
+        .menu a:hover{
+            background-color: rgba(80, 128, 238, 0.12);
+            color: var(--main-color);
+            transform: translateY(-2px);
+        }
+        .submenu{
+            position:absolute;
+            top:100%;
+            left:0;
+            background:rgba(255,255,255,0.95);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            border-radius:10px;
+            box-shadow:0 4px 16px rgba(0,0,0,0.12);
+            min-width:120px;
+            display:none;
+            flex-direction:column;
+            overflow:hidden;
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+        .submenu a{
+            padding:10px 16px;
+            white-space:nowrap;
+            border-radius:0;
+        }
+        .submenu a:hover{
+            background-color: rgba(80, 128, 238, 0.1);
+        }
+        .submenu a.lang-active {
+            color: var(--main-color);
+            background: rgba(80, 128, 238, 0.08);
+        }
+        .menu > div:hover .submenu{
+            display:flex;
+        }
+        /* 移动端点击展开二级菜单 */
+        .submenu.open{
+            display:flex;
+        }
+        .login-status-box{
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+            padding:6px 12px;
+            border-radius:20px;
+            color:#333;
+            font-size:14px;
+            background: rgba(255,255,255,0.6);
+        }
+        .login-status-box img{
+            width:24px;
+            height:24px;
+            border-radius:50%;
+            object-fit:cover;
+        }
+        .login-status-box .profile-link-btn{
+            margin-left:4px;
+            padding:2px 10px;
+            border-radius:12px;
+            color:#fff;
+            font-size:12px;
+            cursor:pointer;
+            background:linear-gradient(135deg,#ff69b4,#ff8fab);
+            box-shadow:0 2px 8px rgba(255,105,180,0.3);
+            transition:opacity 0.2s;
+        }
+        .login-status-box .profile-link-btn:hover{ opacity:0.9; }
+        :root{
+            --bg-color: #eaecf0;
+            --main-color: #5080ee;
+            --nav-item-width: 100px;
+            --nav-item-height: 32px;
+            --nav-item-border-width: 4px;
+        }
+        .wrap{
+            max-width: 700px;
+            margin: 60px auto 40px;
+            padding: 0 16px;
+        }
+        .wrap h1{
+            text-align: center;
+            color: #000;
+            margin-bottom: 30px;
+            font-size: 32px;
+        }
+        .form-item{
+            margin-bottom: 20px;
+        }
+        #qqNum{
+            width: 100%;
+            height: 46px;
+            padding: 0 16px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border 0.25s,box-shadow 0.25s;
+        }
+        #name{
+            width: 100%;
+            height: 46px;
+            padding: 0 16px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border 0.25s,box-shadow 0.25s;
+        }
+        #message{
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            resize: none;
+            transition: border 0.25s;
+        }
+        #qqNum:focus,#name:focus,#message:focus{
+            outline: none;
+            border-color: var(--main-color);
+            box-shadow: 0 0 0 3px rgba(80, 128, 238, 0.18);
+        }
+        .avatar-preview{
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 10px 0;
+            display: none;
+            border: 2px solid var(--main-color);
+        }
+        .btn-box{
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        #submitBtn{
+            padding: 12px 36px;
+            background: var(--main-color);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        #submitBtn:hover{
+            opacity: 0.92;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(80, 128, 238, 0.22);
+        }
+        #submitBtn:active{
+            transform: translateY(0);
+        }
+        .msg-title{
+            font-size: 22px;
+            color: #333;
+        }
+        .msg-title-row{
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+            margin-bottom:16px;
+            padding-bottom:8px;
+            border-bottom:1px solid #eee;
+        }
+        /* ===== 留言堆叠卡片 ===== */
+        .stack-toggle{
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+            padding:7px 16px;
+            border-radius:20px;
+            font-size:13px;
+            color:#fff;
+            background:linear-gradient(135deg,#ff69b4,#ff8fab);
+            box-shadow:0 4px 12px rgba(255,105,180,0.3);
+            cursor:pointer;
+            transition:opacity .2s, transform .15s;
+            border:none;
+            white-space:nowrap;
+        }
+        .stack-toggle:hover{ opacity:.92; }
+        .stack-toggle:active{ transform:scale(.96); }
+        .stack-toggle .ico{ transition:transform .4s cubic-bezier(.2,.8,.2,1); display:inline-block; font-size:11px; }
+        .stack-toggle.expanded .ico{ transform:rotate(180deg); }
+        .message-list{
+            display:flex;
+            flex-direction:column;
+            position:relative;
+        }
+        .message-list .msg-item{
+            position:relative;
+            transition:transform .5s cubic-bezier(.22,.9,.28,1.04), margin-top .5s cubic-bezier(.22,.85,.25,1), box-shadow .35s ease, opacity .4s ease;
+            will-change:transform, margin-top;
+        }
+        .message-list.no-transition .msg-item{ transition:none !important; }
+        .message-list.stacked .msg-item{ cursor:pointer; }
+        .message-list.stacked .msg-item:first-child{
+            box-shadow:0 14px 32px rgba(0,0,0,.16);
+            cursor:default;
+        }
+        .message-list.stacked .msg-item:nth-child(n+2){
+            box-shadow:0 4px 14px rgba(0,0,0,.10);
+        }
+        .stack-count-tip{
+            text-align:center;
+            color:#b89aa8;
+            font-size:13px;
+            padding:10px 0 0;
+        }
+        .msg-item{
+            background: #fff;
+            padding: 18px 22px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0.06);
+            display: flex;
+            gap:14px;
+            align-items: flex-start;
+        }
+        .msg-avatar{
+            width:60px;
+            height:60px;
+            border-radius:50%;
+            object-fit:cover;
+        }
+        .msg-content-box{
+            flex:1;
+            display: flex;
+            flex-direction: column;
+        }
+        .msg-header{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        .msg-user{
+            font-weight: 600;
+            color: var(--main-color);
+            font-size: 17px;
+        }
+        .msg-text{
+            color: #444;
+            font-size: 16px;
+            line-height: 1.6;
+            flex: 1;
+        }
+        .msg-time{
+            margin-top: 8px;
+            font-size: 13px;
+            color: #999;
+            text-align: right;
+        }
+        /* ===== 更多按钮 + 下拉菜单 ===== */
+        .msg-more-wrap{
+            position: relative;
+        }
+        .msg-more-btn{
+            padding: 4px 12px;
+            background: rgba(80, 128, 238, 0.08);
+            color: var(--main-color);
+            border: 1px solid rgba(80, 128, 238, 0.2);
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+        .msg-more-btn:hover{
+            background: rgba(80, 128, 238, 0.15);
+            border-color: rgba(80, 128, 238, 0.4);
+        }
+        .msg-more-btn:active{
+            background: rgba(80, 128, 238, 0.25);
+        }
+        .msg-more-btn .arrow{
+            font-size: 10px;
+            transition: transform 0.2s ease;
+        }
+        .msg-more-btn.open .arrow{
+            transform: rotate(180deg);
+        }
+        .msg-more-menu{
+            position: absolute;
+            top: calc(100% + 6px);
+            right: 0;
+            min-width: 130px;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.6);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            padding: 6px;
+            z-index: 100;
+            opacity: 0;
+            transform: translateY(-8px) scale(0.95);
+            pointer-events: none;
+            transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .msg-more-menu.show{
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+        .msg-more-menu .menu-item{
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.15s ease;
+            white-space: nowrap;
+        }
+        .msg-more-menu .menu-item:hover{
+            background: rgba(80, 128, 238, 0.08);
+        }
+        .msg-more-menu .menu-item .mi-icon{
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+            line-height: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .msg-more-menu .menu-item span.mi-icon{
+            font-size: 16px;
+        }
+        .menu-reply{ color: #ff69b4; }
+        .menu-share{ color: #5080ee; }
+        .menu-report{ color: #ffc107; }
+        .menu-delete{ color: #ff6b6b; }
+        /* ===== 回复功能样式 ===== */
+        .reply-list{
+            margin-top: 10px;
+            padding-left: 14px;
+            border-left: 3px solid #ffe0ec;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .reply-item{
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            padding: 8px 12px;
+            background: #fff5f9;
+            border-radius: 8px;
+        }
+        .reply-avatar{
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        .reply-content-box{
+            flex: 1;
+            min-width: 0;
+        }
+        .reply-header{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2px;
+        }
+        .reply-user{
+            font-weight: 600;
+            color: #ff69b4;
+            font-size: 14px;
+        }
+        .reply-text{
+            color: #555;
+            font-size: 14px;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+        .reply-time{
+            font-size: 11px;
+            color: #aaa;
+            margin-top: 2px;
+        }
+        .reply-delete-btn{
+            padding: 2px 8px;
+            background: rgba(255,107,107,0.1);
+            color: #ff6b6b;
+            border: 1px solid rgba(255,107,107,0.3);
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+        .reply-delete-btn:hover{
+            background: rgba(255,107,107,0.2);
+        }
+        /* ===== 分享弹窗（毛玻璃） ===== */
+        .share-mask {
+            position: fixed;
+            inset: 0;
+            background: rgba(12, 18, 35, 0.35);
+            backdrop-filter: blur(32px) saturate(200%) brightness(0.9);
+            -webkit-backdrop-filter: blur(32px) saturate(200%) brightness(0.9);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .share-mask.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .share-modal {
+            width: min(400px, 95vw);
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(36px) saturate(220%) contrast(1.1) brightness(1.05);
+            -webkit-backdrop-filter: blur(36px) saturate(220%) contrast(1.1) brightness(1.05);
+            border: 1px solid rgba(255, 255, 255, 0.95);
+            border-radius: 22px;
+            padding: 28px 24px;
+            box-shadow:
+                0 8px 40px rgba(31, 38, 135, 0.15),
+                inset 0 1px 0 rgba(255,255,255,0.6),
+                inset 0 -1px 0 rgba(0,0,0,0.03);
+            transform: scale(0.88) translateY(15px);
+            transition: transform 0.38s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .share-mask.show .share-modal {
+            transform: scale(1) translateY(0);
+        }
+        .share-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 26px;
+        }
+        .share-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+        .share-head .close-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 1px solid rgba(15, 23, 42, 0.06);
+            background: rgba(255,255,255,0.45);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            font-size: 16px;
+            color: #64748b;
+        }
+        .share-list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px 8px;
+            width: 100%;
+        }
+        .share-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            width: 100%;
+            opacity: 0;
+            transform: translateY(12px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .share-mask.show .share-item:nth-child(1) { transition-delay: 0.06s; }
+        .share-mask.show .share-item:nth-child(2) { transition-delay: 0.12s; }
+        .share-mask.show .share-item:nth-child(3) { transition-delay: 0.18s; }
+        .share-mask.show .share-item {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .share-icon-box {
+            width: clamp(40px, 9vw, 48px);
+            height: clamp(40px, 9vw, 48px);
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-size: clamp(18px, 4vw, 22px);
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 5px 16px rgba(0,0,0,0.18);
+            transition: transform 0.2s ease;
+        }
+        .share-icon-box:hover {
+            transform: scale(1.08);
+        }
+        .share-text {
+            font-size: 13px;
+            color: #333;
+        }
+        .share-icon-box.wx { background: #07C160; }
+        .share-icon-box.qq { background: #12B7F5; }
+        .share-icon-box.copy { background: #6366f1; }
+        .share-toast-box {
+            position: fixed;
+            top: 35%;
+            left: 50%;
+            transform: translate(-50%,-50%) scale(0.8);
+            background: rgba(255,240,248,0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 16px 32px;
+            border-radius: 99px;
+            border: 1px solid #ffc8dd;
+            box-shadow: 0 4px 25px rgba(255,180,210,0.3);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 10001;
+            font-size: 15px;
+            color: #773454;
+            white-space: nowrap;
+        }
+        .share-toast-box.active {
+            opacity: 1;
+            transform: translate(-50%,-50%) scale(1);
+        }
+        .share-tip-modal {
+            position: fixed;
+            top: 35%;
+            left: 50%;
+            transform: translate(-50%,-50%) scale(0.8);
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 20px 25px;
+            border-radius: 16px;
+            z-index: 10001;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            text-align: center;
+            max-width: 300px;
+        }
+        .share-tip-modal.active {
+            opacity: 1;
+            transform: translate(-50%,-50%) scale(1);
+            pointer-events: auto;
+        }
+        .share-tip-modal p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+            color: #333;
+        }
+        .share-tip-modal button {
+            padding: 6px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #6366f1;
+            color: #fff;
+            cursor: pointer;
+        }
+        @media (max-width: 420px) {
+            .share-modal { padding: 24px 18px; }
+            .share-list { gap: 16px 4px; }
+        }
+        /* ===== 公告弹窗（毛玻璃） ===== */
+        .announce-mask {
+            position: fixed;
+            inset: 0;
+            background: rgba(12, 18, 35, 0.35);
+            backdrop-filter: blur(32px) saturate(200%) brightness(0.9);
+            -webkit-backdrop-filter: blur(32px) saturate(200%) brightness(0.9);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.35s ease, visibility 0.35s ease;
+            z-index: 10001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .announce-mask.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .announce-modal {
+            width: min(440px, 95vw);
+            max-height: 80vh;
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(36px) saturate(220%) contrast(1.1) brightness(1.05);
+            -webkit-backdrop-filter: blur(36px) saturate(220%) contrast(1.1) brightness(1.05);
+            border: 1px solid rgba(255, 255, 255, 0.95);
+            border-radius: 22px;
+            padding: 30px 26px 24px;
+            box-shadow:
+                0 8px 40px rgba(31, 38, 135, 0.15),
+                inset 0 1px 0 rgba(255,255,255,0.6);
+            transform: scale(0.88) translateY(15px);
+            transition: transform 0.38s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+        }
+        .announce-mask.show .announce-modal {
+            transform: scale(1) translateY(0);
+        }
+        .announce-icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 14px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #b8a0d8, #f78fb3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 26px;
+            box-shadow: 0 6px 18px rgba(184, 160, 216, 0.4);
+        }
+        .announce-title {
+            text-align: center;
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+        .announce-date {
+            text-align: center;
+            font-size: 12px;
+            color: #9ca3af;
+            margin-bottom: 18px;
+        }
+        .announce-body {
+            font-size: 14px;
+            line-height: 1.85;
+            color: #374151;
+            white-space: pre-wrap;
+            word-break: break-word;
+            padding: 0 4px;
+        }
+        .announce-body a {
+            color: #7c5cbf;
+            text-decoration: none;
+            border-bottom: 1px dashed rgba(124, 92, 191, 0.5);
+        }
+        .announce-body a:hover { opacity: 0.8; }
+        .announce-qq {
+            margin-top: 18px;
+            text-align: center;
+        }
+        .announce-qq-img {
+            width: 180px;
+            height: 180px;
+            border-radius: 14px;
+            border: 1px solid rgba(184, 160, 216, 0.3);
+            box-shadow: 0 4px 16px rgba(184, 160, 216, 0.2);
+            object-fit: cover;
+            display: block;
+            margin: 0 auto 12px;
+        }
+        .announce-qq-num {
+            font-size: 15px;
+            color: #1f2937;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 16px;
+            background: rgba(184, 160, 216, 0.15);
+            border-radius: 999px;
+            border: 1px solid rgba(184, 160, 216, 0.3);
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: all;
+        }
+        .announce-qq-num:hover {
+            background: rgba(184, 160, 216, 0.3);
+            transform: translateY(-1px);
+        }
+        .announce-qq-num i { color: #7c5cbf; }
+        .announce-qq-tip {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: 8px;
+        }
+        .announce-footer {
+            margin-top: 22px;
+            display: flex;
+            justify-content: center;
+        }
+        .announce-btn {
+            min-width: 160px;
+            padding: 11px 28px;
+            border: none;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #b8a0d8, #f78fb3);
+            color: #fff;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 14px rgba(184, 160, 216, 0.4);
+        }
+        .announce-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(184, 160, 216, 0.55);
+        }
+        .announce-btn:active { transform: translateY(0); }
+        @media (max-width: 420px) {
+            .announce-modal { padding: 24px 18px 20px; }
+            .announce-title { font-size: 18px; }
+            .announce-body { font-size: 13px; }
+        }
+        /* ===== 强制绑定邮箱弹窗 ===== */
+        .email-bind-mask {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 10010;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .email-bind-mask.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .email-bind-modal {
+            width: 100%;
+            max-width: 440px;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(30px) saturate(190%);
+            -webkit-backdrop-filter: blur(30px) saturate(190%);
+            border: 1px solid rgba(255,255,255,0.8);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            padding: 36px 32px 32px;
+            text-align: center;
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.35s cubic-bezier(0.2,0,0.2,1);
+        }
+        .email-bind-mask.show .email-bind-modal {
+            transform: scale(1) translateY(0);
+        }
+        .email-bind-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 16px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #b8a0d8, #f78fb3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 26px;
+            box-shadow: 0 6px 20px rgba(184,160,216,0.4);
+        }
+        .email-bind-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 12px;
+            letter-spacing: 2px;
+        }
+        .email-bind-desc {
+            font-size: 13px;
+            color: #6b7280;
+            line-height: 1.7;
+            margin-bottom: 24px;
+        }
+        .email-bind-field {
+            margin-bottom: 14px;
+        }
+        .email-bind-field input {
+            width: 100%;
+            padding: 13px 16px;
+            font-size: 15px;
+            border: 1px solid rgba(184,160,216,0.3);
+            border-radius: 14px;
+            background: rgba(255,255,255,0.8);
+            color: #1f2937;
+            outline: none;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+        }
+        .email-bind-field input:focus {
+            border-color: #b8a0d8;
+            box-shadow: 0 0 0 4px rgba(184,160,216,0.15);
+            background: #fff;
+        }
+        .email-bind-code-row {
+            display: flex;
+            gap: 10px;
+        }
+        .email-bind-code-row input {
+            flex: 1;
+        }
+        .email-bind-codebtn {
+            white-space: nowrap;
+            padding: 13px 18px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #b8a0d8, #f78fb3);
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .email-bind-codebtn:hover { opacity: 0.9; transform: translateY(-1px); }
+        .email-bind-codebtn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .email-bind-tip {
+            font-size: 13px;
+            min-height: 20px;
+            margin-bottom: 10px;
+            transition: all 0.2s ease;
+        }
+        .email-bind-tip.ok { color: #10b981; }
+        .email-bind-tip.err { color: #ef4444; }
+        .email-bind-submit {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #b8a0d8, #f78fb3);
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 6px 20px rgba(184,160,216,0.4);
+        }
+        .email-bind-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 26px rgba(184,160,216,0.55); }
+        .email-bind-submit:active { transform: translateY(0); }
+        .email-bind-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        @media (max-width: 420px) {
+            .email-bind-modal { padding: 28px 20px 24px; }
+            .email-bind-title { font-size: 19px; }
+            .email-bind-desc { font-size: 12px; }
+        }
+        /* ===== 回复弹窗（毛玻璃） ===== */
+        .reply-modal-overlay{
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.25);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+        .reply-modal-overlay.active{
+            display: flex;
+            opacity: 1;
+        }
+        .reply-modal{
+            width: 90%;
+            max-width: 480px;
+            background: rgba(255,255,255,0.65);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 18px;
+            box-shadow: 0 12px 40px rgba(255,105,180,0.15), 0 2px 8px rgba(0,0,0,0.08);
+            overflow: hidden;
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .reply-modal-overlay.active .reply-modal{
+            transform: scale(1) translateY(0);
+        }
+        .reply-modal-header{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255,105,180,0.15);
+        }
+        .reply-modal-title{
+            font-size: 16px;
+            font-weight: 600;
+            color: #ff69b4;
+        }
+        .reply-modal-close{
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: rgba(255,105,180,0.1);
+            color: #ff69b4;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .reply-modal-close:hover{
+            background: rgba(255,105,180,0.25);
+        }
+        .reply-modal-body{
+            padding: 18px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .reply-modal-qq{
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .reply-modal-qq input{
+            flex: 1;
+            padding: 8px 14px;
+            border: 1.5px solid rgba(255,105,180,0.2);
+            border-radius: 10px;
+            font-size: 13px;
+            outline: none;
+            background: rgba(255,255,255,0.5);
+            transition: border-color 0.2s, background 0.2s;
+        }
+        .reply-modal-qq input:focus{
+            border-color: #ff69b4;
+            background: rgba(255,255,255,0.8);
+        }
+        .reply-modal-avatar{
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(255,105,180,0.3);
+            flex-shrink: 0;
+        }
+        .reply-modal-avatar.empty{
+            display: none;
+        }
+        .reply-modal-textarea{
+            width: 100%;
+            min-height: 100px;
+            max-height: 180px;
+            padding: 12px 14px;
+            border: 1.5px solid rgba(255,105,180,0.2);
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.6;
+            resize: vertical;
+            font-family: inherit;
+            outline: none;
+            background: rgba(255,255,255,0.5);
+            transition: border-color 0.2s, background 0.2s;
+            box-sizing: border-box;
+        }
+        .reply-modal-textarea:focus{
+            border-color: #ff69b4;
+            background: rgba(255,255,255,0.8);
+        }
+        .reply-modal-emoji-bar{
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .emoji-toggle-btn{
+            padding: 5px 12px;
+            background: rgba(255,105,180,0.1);
+            color: #ff69b4;
+            border: 1px solid rgba(255,105,180,0.2);
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .emoji-toggle-btn:hover{
+            background: rgba(255,105,180,0.2);
+        }
+        .emoji-picker{
+            display: none;
+            padding: 10px;
+            background: rgba(255,255,255,0.4);
+            border: 1px solid rgba(255,105,180,0.15);
+            border-radius: 10px;
+            flex-wrap: wrap;
+            gap: 4px;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+        .emoji-picker.active{
+            display: flex;
+        }
+        .emoji-item{
+            font-size: 20px;
+            cursor: pointer;
+            padding: 4px 6px;
+            border-radius: 6px;
+            transition: background 0.15s;
+            user-select: none;
+        }
+        .emoji-item:hover{
+            background: rgba(255,105,180,0.15);
+        }
+        .reply-modal-footer{
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            padding: 0 20px 18px;
+        }
+        .reply-modal-cancel{
+            padding: 8px 20px;
+            background: rgba(200,200,200,0.3);
+            color: #666;
+            border: 1px solid rgba(200,200,200,0.4);
+            border-radius: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .reply-modal-cancel:hover{
+            background: rgba(200,200,200,0.5);
+        }
+        .reply-modal-send{
+            padding: 8px 24px;
+            background: linear-gradient(135deg, #ff69b4, #ff8fab);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.15s;
+            box-shadow: 0 4px 12px rgba(255,105,180,0.3);
+        }
+        .reply-modal-send:hover{
+            opacity: 0.92;
+        }
+        .reply-modal-send:active{
+            transform: scale(0.97);
+        }
+        .reply-modal-send:disabled{
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .intro-card{
+            max-width: 1200px;
+            margin: 0 auto 30px;
+            padding: 0;
+            border-radius: 0;
+            box-shadow: none;
+            background: transparent;
+        }
+        .intro-title{
+            font-size: 26px;
+            color: var(--main-color);
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .intro-text{
+            font-size: 16px;
+            color: #444;
+            line-height: 1.9;
+            margin-bottom: 12px;
+        }
+        .intro-sub{
+            font-size: 20px;
+            color: #333;
+            margin: 20px 0 10px;
+            padding-left: 8px;
+            border-left: 4px solid var(--main-color);
+        }
+        .waterfall-wrap{
+            max-width: 1200px;
+            margin: 60px auto 40px;
+            padding: 0 16px;
+            position: relative;
+        }
+        .waterfall-title{
+            text-align: center;
+            font-size: 28px;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+            letter-spacing: 2px;
+        }
+        .waterfall-subtitle{
+            text-align: center;
+            font-size: 14px;
+            color: #000;
+            margin-bottom: 28px;
+            position: relative;
+            z-index: 1;
+        }
+        .waterfall{
+            display: flex;
+            gap: 18px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 4px 4px 18px;
+            margin: 0 -4px;
+            position: relative;
+            z-index: 1;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .waterfall::-webkit-scrollbar{
+            display: none;
+        }
+        /* 画廊箭头按钮 */
+        .gallery-arrow{
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            border: 1px solid rgba(255,255,255,0.55);
+            background: rgba(255,255,255,0.22);
+            -webkit-backdrop-filter: blur(14px) saturate(180%);
+            backdrop-filter: blur(14px) saturate(180%);
+            box-shadow: 0 6px 20px rgba(120,80,160,0.18);
+            color: #6a4a8a;
+            font-size: 20px;
+            font-weight: 600;
+            line-height: 1;
+            transition: all 0.28s cubic-bezier(0.2,0.8,0.2,1);
+            opacity: 0;
+            pointer-events: none;
+            user-select: none;
+        }
+        .waterfall-wrap:hover .gallery-arrow{
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .gallery-arrow:hover{
+            background: rgba(255,255,255,0.38);
+            box-shadow: 0 8px 24px rgba(120,80,160,0.28);
+            transform: translateY(-50%) scale(1.08);
+        }
+        .gallery-arrow:active{
+            transform: translateY(-50%) scale(0.95);
+        }
+        .gallery-arrow.disabled{
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+        .gallery-arrow.prev{
+            left: -10px;
+        }
+        .gallery-arrow.next{
+            right: -10px;
+        }
+        @media (max-width:768px){
+            .gallery-arrow{
+                width: 38px;
+                height: 38px;
+                font-size: 16px;
+            }
+            .gallery-arrow.prev{ left: -6px; }
+            .gallery-arrow.next{ right: -6px; }
+        }
+        .waterfall-item{
+            flex: 0 0 auto;
+            width: 280px;
+            border-radius: 14px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.3);
+            box-shadow: 0 4px 16px rgba(180,140,220,0.1);
+            transition: transform 0.35s ease, box-shadow 0.35s ease;
+        }
+        .waterfall-item:hover{
+            transform: translateY(-6px);
+            box-shadow: 0 12px 30px rgba(180,140,220,0.3);
+        }
+        .waterfall-item img{
+            width: 100%;
+            height: 360px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+        .waterfall-item:hover img{
+            transform: scale(1.06);
+        }
+        .waterfall-item::after{
+            content:"";
+            position:absolute;
+            inset:0;
+            background: linear-gradient(to top, rgba(120,80,160,0.45), transparent 55%);
+            opacity:0;
+            transition: opacity 0.35s ease;
+            pointer-events:none;
+        }
+        .waterfall-item:hover::after{
+            opacity:1;
+        }
+        .waterfall-item .view-tip{
+            position:absolute;
+            bottom:12px;
+            left:50%;
+            transform: translateX(-50%) translateY(10px);
+            color:#fff;
+            font-size:13px;
+            padding:4px 14px;
+            border-radius:20px;
+            background: rgba(255,255,255,0.22);
+            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+            border:1px solid rgba(255,255,255,0.35);
+            opacity:0;
+            transition: all 0.35s ease;
+            z-index:2;
+            pointer-events:none;
+            white-space:nowrap;
+        }
+        .waterfall-item:hover .view-tip{
+            opacity:1;
+            transform: translateX(-50%) translateY(0);
+        }
+        /* 大图查看器 */
+        .photo-lightbox{
+            position: fixed;
+            inset: 0;
+            background: rgba(20,10,30,0.75);
+            -webkit-backdrop-filter: blur(14px);
+            backdrop-filter: blur(14px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1500;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            padding: 24px;
+        }
+        .photo-lightbox.show{
+            opacity: 1;
+            visibility: visible;
+        }
+        .photo-lightbox img{
+            max-width: 90vw;
+            max-height: 86vh;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            transform: scale(0.92);
+            transition: transform 0.35s ease;
+            display: block;
+            margin: 0 auto;
+        }
+        .photo-lightbox.show img{
+            transform: scale(1);
+        }
+        .photo-lightbox .close-btn{
+            position: absolute;
+            top: 24px;
+            right: 28px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.4);
+            background: rgba(255,255,255,0.18);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s ease;
+            z-index: 1502;
+        }
+        .photo-lightbox .close-btn:hover{
+            background: rgba(255,255,255,0.32);
+            transform: rotate(90deg);
+        }
+        .photo-lightbox .save-btn{
+            position: absolute;
+            top: 24px;
+            right: 84px;
+            height: 44px;
+            padding: 0 18px;
+            border-radius: 22px;
+            border: 1px solid rgba(255,255,255,0.4);
+            background: rgba(255,255,255,0.18);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.25s ease;
+            font-family: inherit;
+            z-index: 1502;
+        }
+        .photo-lightbox .save-btn:hover{
+            background: rgba(255,255,255,0.32);
+            transform: translateY(-2px);
+        }
+        .photo-lightbox .save-btn:active{
+            transform: translateY(0);
+        }
+        /* ===== 成员页 ===== */
+        .team-wrap{
+            max-width: 1200px;
+            margin: 20px auto 40px;
+            padding: 40px 24px;
+            border-radius: 24px;
+            background: rgba(255,255,255,0.5);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.6);
+            box-shadow: 0 8px 36px rgba(180,140,220,0.1);
+            position: relative;
+            z-index: 1;
+        }
+        .team-title{
+            text-align: center;
+            font-size: 28px;
+            font-weight: 600;
+            color: #4a3340;
+            margin-bottom: 36px;
+            letter-spacing: 2px;
+            position: relative;
+        }
+        .team-title::after{
+            content:'';
+            display:block;
+            width:60px;
+            height:3px;
+            border-radius:3px;
+            background: linear-gradient(90deg, #ff9ab6, #c9a9d4);
+            margin: 14px auto 0;
+        }
+        .team-grid{
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        .team-card{
+            position: relative;
+            background: rgba(255,255,255,0.65);
+            -webkit-backdrop-filter: blur(14px);
+            backdrop-filter: blur(14px);
+            border: 1px solid rgba(255,255,255,0.7);
+            border-radius: 20px;
+            padding: 32px 24px 24px;
+            text-align: center;
+            box-shadow: 0 6px 22px rgba(180,140,220,0.08);
+            transition: transform 0.35s ease, box-shadow 0.35s ease;
+        }
+        .team-card:hover{
+            transform: translateY(-6px);
+            box-shadow: 0 14px 36px rgba(180,140,220,0.18);
+        }
+        .team-badge{
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            padding: 4px 14px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #fff;
+            background: linear-gradient(135deg, #c9a9d4, #e8c5d0);
+            box-shadow: 0 2px 8px rgba(201,169,212,0.35);
+        }
+        .team-badge.owner{
+            background: linear-gradient(135deg, #ff69b4, #ffa07a);
+            box-shadow: 0 2px 8px rgba(255,105,180,0.35);
+        }
+        .team-badge.vice{
+            background: linear-gradient(135deg, #6a9df0, #8ac8ff);
+            box-shadow: 0 2px 8px rgba(106,157,240,0.35);
+        }
+        .team-badge.sponsor{
+            background: linear-gradient(135deg, #a8e063, #56ab2f);
+            box-shadow: 0 2px 8px rgba(86,171,47,0.35);
+        }
+        .team-avatar{
+            width: 96px;
+            height: 96px;
+            margin: 8px auto 18px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid #fff;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+        }
+        .team-avatar img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .team-name{
+            font-size: 18px;
+            font-weight: 700;
+            color: #4a3340;
+            margin-bottom: 14px;
+        }
+        .team-meta{
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 999px;
+            background: rgba(201,169,212,0.12);
+            margin-bottom: 16px;
+        }
+        .meta-label{
+            font-size: 12px;
+            color: #8a6a7a;
+        }
+        .meta-value{
+            font-size: 13px;
+            font-weight: 600;
+            color: #c9a9d4;
+        }
+        .team-bio{
+            font-size: 14px;
+            color: #6b5560;
+            line-height: 1.75;
+            padding-top: 14px;
+            border-top: 1px dashed rgba(201,169,212,0.25);
+            text-align: left;
+            min-height: 68px;
+        }
+        @media (max-width:768px){
+            body {
+                padding-top: 52px;
+            }
+            .navbar{
+                height:52px;
+                padding:0 12px;
+            }
+            .logo img{
+                width:32px;
+                height:32px;
+            }
+            .site-name{
+                font-size:15px;
+            }
+            .hamburger{
+                display:flex;
+                padding:4px 8px;
+            }
+            .hamburger img{
+                width:20px;
+                height:20px;
+            }
+            .menu{
+                position:fixed;
+                top:52px;
+                left:0;
+                right:0;
+                background:rgba(255,255,255,0.96);
+                -webkit-backdrop-filter:blur(10px);
+                backdrop-filter:blur(10px);
+                flex-direction:column;
+                padding:12px 0;
+                gap:8px;
+                display:none;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                max-height: calc(100vh - 52px);
+                overflow-y: auto;
+            }
+            .menu.show{
+                display:flex;
+            }
+            .menu a{
+                justify-content:center;
+                width:100%;
+                padding:10px 14px;
+                font-size:14px;
+            }
+            .menu > div{
+                display:block;
+                width:100%;
+                min-height:0;
+            }
+            .submenu{
+                position:static;
+                box-shadow:none;
+                background:transparent;
+                display:grid;
+                grid-template-rows:0fr;
+                min-height:0;
+                padding:0;
+                margin:0;
+                border:0;
+                overflow:hidden;
+                transition: grid-template-rows 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.25s ease, background 0.25s ease;
+                opacity:0;
+            }
+            .submenu.open{
+                grid-template-rows:1fr;
+                opacity:1;
+                background:#f7f7f7;
+            }
+            .submenu a{
+                justify-content:center;
+                width:100%;
+                padding-top:10px;
+                padding-bottom:10px;
+            }
+            .login-status-box{
+                display:flex;
+                width:100%;
+                justify-content:center;
+                text-align:center;
+                padding:4px 10px;
+                font-size:12px;
+                gap:4px;
+            }
+            .login-status-box img{
+                width:20px;
+                height:20px;
+            }
+            .login-status-box .profile-link-btn{
+                padding:1px 8px;
+                font-size:11px;
+            }
+            .waterfall{
+                gap: 12px;
+            }
+            .waterfall-item{
+                width: 220px;
+            }
+            .waterfall-item img{
+                height: 290px;
+            }
+            .waterfall-wrap{
+                margin: 30px 12px;
+                padding: 24px 16px;
+                border-radius: 18px;
+            }
+            .waterfall-title{
+                font-size: 24px;
+            }
+            /* 欢迎区 */
+            .welcome-title{
+                font-size: 28px;
+            }
+            .welcome-desc{
+                font-size: 15px;
+            }
+            /* 留言区 */
+            .msg-title{
+                font-size: 18px;
+            }
+            .msg-user{
+                font-size: 15px;
+            }
+            .msg-text{
+                font-size: 14px;
+            }
+            .msg-time{
+                font-size: 12px;
+            }
+            .stack-toggle{
+                font-size: 12px;
+            }
+            /* 登录框字体调大 */
+            .login-status-box{
+                font-size: 13px;
+            }
+            .login-status-box .profile-link-btn{
+                font-size: 12px;
+            }
+            /* 成员页 */
+            .team-wrap{
+                margin: 14px 12px 30px;
+                padding: 28px 18px;
+                border-radius: 20px;
+            }
+            .team-title{
+                font-size: 22px;
+                margin-bottom: 24px;
+            }
+            .team-grid{
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            .team-card{
+                padding: 28px 20px 20px;
+            }
+            .team-avatar{
+                width: 80px;
+                height: 80px;
+            }
+            .team-name{
+                font-size: 16px;
+            }
+            .team-bio{
+                font-size: 13px;
+                min-height: 56px;
+            }
+        }
+        @media (max-width:480px){
+            body {
+                padding-top: 48px;
+            }
+            .navbar{
+                height:48px;
+                padding:0 10px;
+            }
+            .logo img{
+                width:28px;
+                height:28px;
+            }
+            .site-name{
+                font-size:14px;
+            }
+            .navbar-left-wrap{
+                gap:6px;
+            }
+            .hamburger{
+                padding:3px 6px;
+            }
+            .hamburger img{
+                width:18px;
+                height:18px;
+            }
+            .menu{
+                top:48px;
+                max-height: calc(100vh - 48px);
+            }
+            .waterfall{
+                gap: 10px;
+            }
+            .waterfall-item{
+                width: 180px;
+            }
+            .waterfall-item img{
+                height: 240px;
+            }
+            .waterfall-wrap{
+                margin: 20px 10px;
+                padding: 20px 14px;
+            }
+            .waterfall-title{
+                font-size: 22px;
+                letter-spacing: 1px;
+            }
+            /* 欢迎区 */
+            .welcome-title{
+                font-size: 24px;
+                letter-spacing: 1px;
+            }
+            .welcome-desc{
+                font-size: 14px;
+            }
+            .welcome-btn{
+                width: 210px;
+                font-size: 14px;
+                padding: 12px 28px;
+                gap: 8px;
+            }
+            .welcome-btn img{
+                width: 18px;
+                height: 18px;
+            }
+            /* 留言区 */
+            .msg-title{
+                font-size: 16px;
+            }
+            .msg-user{
+                font-size: 14px;
+            }
+            .msg-text{
+                font-size: 13px;
+            }
+            .msg-time{
+                font-size: 11px;
+            }
+            .stack-toggle{
+                font-size: 11px;
+            }
+            /* 登录框 */
+            .login-status-box{
+                font-size: 12px;
+                padding:3px 8px;
+            }
+            .login-status-box .profile-link-btn{
+                font-size: 11px;
+            }
+            .photo-lightbox .close-btn{
+                top: 16px;
+                right: 16px;
+                width: 38px;
+                height: 38px;
+                font-size: 20px;
+            }
+            .photo-lightbox .save-btn{
+                top: 16px;
+                right: 64px;
+                height: 38px;
+                padding: 0 14px;
+                font-size: 13px;
+            }
+        }
+        footer{
+            margin-top: 60px;
+            padding: 30px 16px;
+            background: rgba(255,255,255,0.72);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.72);
+        }
+        .footer-text{
+            color:#555;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+        .footer-text a{
+            color: var(--main-color);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-left-wrap">
+            <div class="logo">
+                <img src="img/5.jpg" alt="真昼头像" />
+            </div>
+            <div class="site-name">
+                真昼小站
+            </div>
+        </div>
+        <div class="hamburger" id="menuBtn">
+            <img src="./icon/菜单栏.svg" width="24" height="24" alt="菜单" />
+        </div>
+        <div class="menu" id="navMenu">
+            <div id="loginStatusWrap" class="login-status-box"></div>
+            <a href="index2.html">
+                <img src="./icon/首页.svg" width="24" height="24" alt="首页" />
+                <span data-i18n="nav.home">首页</span>
+            </a>
+            <a href="#">
+                <img src="./icon/壁纸.svg" width="24" height="24" alt="壁纸" />
+                <span data-i18n="nav.wallpaper">壁纸</span>
+            </a>
+            <a href="Login.html" id="menuLoginBtn">
+                <img src="./icon/登入.svg" width="24" height="24" alt="登入" />
+                <span data-i18n="nav.login">登入</span>
+            </a>
+            <div>
+                <a href="javascript:;" class="has-submenu">
+                    <img src="./icon/关于.svg" width="24" height="24" alt="关于" />
+                    <span data-i18n="nav.about">关于</span>
+                </a>
+                <div class="submenu">
+                    <a href="mzxm.html">
+                        <img src="./icon/声明.svg" width="24" height="24" alt="声明" />
+                        <span data-i18n="nav.statement">声明</span>
+                    </a>
+                </div>
+            </div>
+            <a href="#messageBlock">
+                <img src="./icon/留言板.svg" width="24" height="24" alt="留言板" />
+                <span data-i18n="nav.message">留言板</span>
+            </a>
+            <a href="zanshang.html">
+                <img src="./icon/赞赏.svg" width="24" height="24" alt="赞赏" />
+                <span data-i18n="nav.donate">赞赏</span>
+            </a>
+            <a href="link.html">
+                <i class="fa-solid fa-link" style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;font-size:18px;color:inherit;"></i>
+                <span data-i18n="nav.friends">友链</span>
+            </a>
+            <div>
+                <a href="javascript:;" class="has-submenu">
+                    <i class="fas fa-globe" style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;font-size:18px;color:inherit;"></i>
+                    <span data-i18n="nav.language">语言</span>
+                </a>
+                <div class="submenu" id="langSubmenu">
+                    <a href="javascript:;" data-lang="zh-CN" class="lang-item lang-active">简体中文</a>
+                    <a href="javascript:;" data-lang="zh-TW" class="lang-item">繁體中文</a>
+                    <a href="javascript:;" data-lang="en" class="lang-item">English</a>
+                    <a href="javascript:;" data-lang="ja" class="lang-item">日本語</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="welcome-hero">
+        <div class="welcome-bg"></div>
+        <div class="welcome-video-wrap" id="welcomeVideoWrap">
+            <button class="welcome-video-toggle" id="videoToggleBtn" aria-label="隐藏视频">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path><line x1="2" y1="2" x2="22" y2="22"></line></svg>
+                <span class="toggle-text" id="videoToggleText" data-i18n="welcome.showVideo">显示视频</span>
+            </button>
+            <div class="welcome-video-iframe-box" id="videoIframeBox">
+                <iframe src="https://player.bilibili.com/player.html?isOutside=true&aid=117069735533468&bvid=BV12Yu96QEMJ&cid=40772370572&p=1&high_quality=1&danmaku=0&q=80&as_wide=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
+            </div>
+        </div>
+        <div class="welcome-content">
+            <h1 class="welcome-title" data-i18n="welcome.title">欢迎来到真昼小站</h1>
+            <p class="welcome-desc" data-i18n="welcome.desc">真昼爱好者小站，名称取自动漫《邻家天使》女主椎名真昼，是个人向二次元小型站点</p>
+        </div>
+        <div class="scroll-hint">
+            <span data-i18n="welcome.scrollHint">向下滚动探索更多</span>
+            <div class="scroll-arrow"></div>
+        </div>
+    </div>
+   
+    <style>
+        @keyframes welcomeFadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes floatArrow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(8px); }
+        }
+        .welcome-hero {
+            position: relative;
+            min-height: calc(100vh - 64px);
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .welcome-bg {
+            position: absolute;
+            inset: 0;
+            background-image: url("img/bg.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 0;
+            transition: opacity 0.5s ease;
+        }
+        /* ===== 欢迎区背景视频 ===== */
+        .welcome-video-wrap{
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            transition: all 0.5s ease;
+        }
+        .welcome-video-toggle{
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 3;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.4);
+            background: rgba(255,255,255,0.18);
+            -webkit-backdrop-filter: blur(12px) saturate(180%);
+            backdrop-filter: blur(12px) saturate(180%);
+            color: #fff;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            white-space: nowrap;
+        }
+        .welcome-video-toggle:hover{
+            background: rgba(255,255,255,0.32);
+            transform: translateY(-1px);
+        }
+        .welcome-video-toggle:active{
+            transform: scale(0.96);
+        }
+        .welcome-video-iframe-box{
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
+            transition: opacity 0.4s ease;
+            opacity: 1;
+        }
+        .welcome-video-iframe-box iframe{
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+            display: block;
+        }
+        /* 视频显示时：铺满 + 隐藏文字按钮 */
+        .welcome-hero.video-on .welcome-content{
+            opacity: 0;
+            pointer-events: none;
+            visibility: hidden;
+        }
+        .welcome-hero.video-on .scroll-hint{
+            opacity: 0;
+            pointer-events: none;
+        }
+        /* 视频隐藏时：收起视频框 */
+        .welcome-video-wrap.hidden .welcome-video-iframe-box{
+            opacity: 0;
+            pointer-events: none;
+            visibility: hidden;
+        }
+        @media (max-width: 768px){
+            .welcome-video-toggle{
+                top: 12px;
+                right: 12px;
+                padding: 4px 10px;
+                font-size: 11px;
+            }
+        }
+        .welcome-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,240,248,0.06) 50%, rgba(200,230,255,0.06) 100%);
+        }
+        .welcome-bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0,0,0,0.0) 50%, rgba(0,0,0,0.18) 100%);
+        }
+        .welcome-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 40px 20px;
+            max-width: 600px;
+            animation: welcomeFadeIn 1s ease-out forwards;
+        }
+        .welcome-avatar {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 24px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid rgba(255,255,255,0.4);
+            box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+            animation: welcomeFadeIn 1s ease-out 0.2s forwards;
+            opacity: 0;
+        }
+        .welcome-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .welcome-title {
+            font-size: 42px;
+            font-weight: 700;
+            color: #fff;
+            margin: 0 0 16px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.25), 0 1px 4px rgba(0,0,0,0.15);
+            letter-spacing: 2px;
+            animation: welcomeFadeIn 1s ease-out 0.3s forwards;
+            opacity: 0;
+        }
+        .welcome-desc {
+            font-size: 18px;
+            color: #fff;
+            margin: 0;
+            line-height: 1.8;
+            text-shadow: 0 1px 6px rgba(0,0,0,0.25);
+            animation: welcomeFadeIn 1s ease-out 0.4s forwards;
+            opacity: 0;
+        }
+        .scroll-hint {
+            position: absolute;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+            text-align: center;
+            color: #fff;
+            font-size: 14px;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.3);
+            animation: welcomeFadeIn 1s ease-out 0.8s forwards;
+            opacity: 0;
+        }
+        .scroll-arrow {
+            width: 20px;
+            height: 20px;
+            margin: 8px auto 0;
+            border-right: 2px solid #fff;
+            border-bottom: 2px solid #fff;
+            transform: rotate(45deg);
+            animation: floatArrow 2s ease-in-out infinite;
+            filter: drop-shadow(0 1px 3px rgba(0,0,0,0.3));
+        }
+        @media (max-width: 768px) {
+            .welcome-title {
+                font-size: 28px;
+                letter-spacing: 1px;
+            }
+            .welcome-desc {
+                font-size: 15px;
+                padding: 0 20px;
+            }
+            .welcome-avatar {
+                width: 80px;
+                height: 80px;
+            }
+        }
+    </style>
+    <div class="content-wrap">
+        <div class="slide-nav">
+            <nav class="nav">
+                <input type="radio" name="nav-item-opt" id="nav-item-opt-1" checked>
+                <label class="nav-item" for="nav-item-opt-1" data-i18n="tab.character">人物介绍</label>
+                <input type="radio" name="nav-item-opt" id="nav-item-opt-2">
+                <label class="nav-item" for="nav-item-opt-2" data-i18n="tab.anime">动漫介绍</label>
+                <input type="radio" name="nav-item-opt" id="nav-item-opt-3">
+                <label class="nav-item" for="nav-item-opt-3" data-i18n="tab.music">音乐介绍</label>
+                <div class="tracker"></div>
+            </nav>
+        </div>
+        <div class="tab-panel">
+            <div class="tab-content active" id="tab1">
+                <div class="intro-card">
+                    <div class="container">
+                        <div class="box">
+                            <div class="img-box">
+                                <img src="./img/9.jpg" alt="椎名真昼">
+                            </div>
+                            <div class="text-box">
+                                <div>
+                                    <h2 data-i18n="char.mahiru.name">椎名真昼</h2>
+                                    <p data-i18n="char.mahiru.desc">本作女主，全校公认“天使大人”，成绩、体育、家务全能。独居在男主隔壁，外表完美高冷，内心缺爱孤独，温柔细心，主动照料藤宫周的生活，慢慢对周动心。</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box">
+                            <div class="img-box">
+                                <img src="./img/10.jpg" alt="藤宫周">
+                            </div>
+                            <div class="text-box">
+                                <div>
+                                    <h2 data-i18n="char.shu.name">藤宫周</h2>
+                                    <p data-i18n="char.shu.desc">本作男主，高一独居男生，不擅家务，生活懒散。性格内敛温柔，雨天借伞与真昼结缘，被真昼照顾渐渐被惯成“废人”，双向治愈彼此。</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box">
+                            <div class="img-box">
+                                <img src="./img/11.jpg" alt="赤泽树">
+                            </div>
+                            <div class="text-box">
+                                <div>
+                                    <h2 data-i18n="char.itsuki.name">赤泽树</h2>
+                                    <p data-i18n="char.itsuki.desc">藤宫周的挚友，开朗帅气，情商高，是男女主感情头号助攻。与白河千岁是情侣，善于观察两人暧昧氛围，经常主动撮合周与真昼。</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="box">
+                            <div class="img-box">
+                                <img src="./img/12.jpg" alt="白河千岁">
+                            </div>
+                            <div class="text-box">
+                                <div>
+                                    <h2 data-i18n="char.chitose.name">白河千岁</h2>
+                                    <p data-i18n="char.chitose.desc">真昼的闺蜜，活泼短发少女。性格热情直率，给真昼取名昵称“小真昼”，经常上门围观两人相处，全力助攻真昼与藤宫周。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-content" id="tab2">
+                <div class="intro-card">
+                    <h2 class="intro-title" data-i18n="anime.title">关于邻家天使大人</h2>
+                    <p class="intro-text" data-i18n="anime.intro">《关于我在无意间被隔壁的天使变成废人这件事》简称邻家天使，是由佐伯さん创作的轻小说，插画由はねこと绘制，于2024年动画化。作品主打细腻治愈日常恋爱，无激烈冲突，靠平淡日常打动观众。</p>
+                    <h3 class="intro-sub" data-i18n="anime.storyTitle">故事梗概</h3>
+                    <p class="intro-text" data-i18n="anime.story">男主藤宫周独自租房，生活邋遢。雨天借伞给校花椎名真昼后产生交集，真昼主动帮他打扫做饭，二人朝夕相伴互相治愈，慢慢萌生爱意。</p>
+                    <h3 class="intro-sub" data-i18n="anime.novelTitle">原作小说</h3>
+                    <p class="intro-text" data-i18n="anime.novel">2019年开始连载，常年轻小说榜单前列，文字细腻，重点刻画两人从陌生到双向奔赴的心理变化，配角风趣鲜活。</p>
+                    <h3 class="intro-sub" data-i18n="anime.staffTitle">动画制作信息</h3>
+                    <p class="intro-text" data-i18n="anime.staff">project No.9制作，画风贴合原作插画，配乐舒缓温柔，完整还原原作治愈氛围。</p>
+                    <h3 class="intro-sub" data-i18n="anime.themeTitle">作品核心主题</h3>
+                    <p class="intro-text" data-i18n="anime.theme">孤独者的互相救赎，两人填补彼此内心空缺，学会陪伴与爱人，主打双向奔赴温柔日常。</p>
+                </div>
+            </div>
+            <div class="tab-content" id="tab3">
+                <div class="intro-card">
+                    <h2 class="intro-title" data-i18n="music.title">邻家天使 音乐介绍</h2>
+                    <p class="intro-text" data-i18n="music.intro">动画全套曲目均为温柔抒情风格，钢琴弦乐为主，氛围感极强。</p>
+                    <h3 class="intro-sub" data-i18n="music.opTitle">片头曲：小さな恋のうた</h3>
+                    <p class="intro-text" data-i18n="music.op">轻快温柔钢琴前奏，歌词描写青涩靠近的心动，搭配两人日常画面。</p>
+                    <h3 class="intro-sub" data-i18n="music.edTitle">片尾曲：優しい予感</h3>
+                    <p class="intro-text" data-i18n="music.ed">安静舒缓纯钢琴打底，适合每集结尾独处心动桥段，广受循环好评。</p>
+                    <h3 class="intro-sub" data-i18n="music.ostTitle">OST原声配乐</h3>
+                    <p class="intro-text" data-i18n="music.ost">分日常轻快、暧昧心动、孤独伤感三类，大量独奏钢琴，干净柔和。</p>
+                    <h3 class="intro-sub" data-i18n="music.highlightTitle">配乐制作亮点</h3>
+                    <p class="intro-text" data-i18n="music.highlight">弱化厚重乐器，平缓旋律，贴合作品温柔治愈内核。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="wrap" id="messageBlock">
+        <h1 data-i18n="msg.title">留言板</h1>
+        <div class="form-item">
+            <input type="number" id="qqNum" data-i18n-placeholder="msg.qqPlaceholder" placeholder="输入QQ号自动加载头像喵（*＾ワ＾*）">
+            <img class="avatar-preview" id="previewAvatar">
+        </div>
+        <div class="form-item">
+            <input type="text" data-i18n-placeholder="msg.namePlaceholder" placeholder="请输入昵称" id="name">
+        </div>
+        <div class="form-item">
+            <textarea name="zz" id="message" cols="30" rows="10" data-i18n-placeholder="msg.contentPlaceholder" placeholder="请输入留言内容（3~500字符）"></textarea>
+        </div>
+        <div class="btn-box">
+            <button id="submitBtn" data-i18n="msg.submit">提交留言</button>
+        </div>
+        <div class="msg-title-row">
+            <h2 class="msg-title" data-i18n="msg.allTitle">全部留言</h2>
+            <button class="stack-toggle" id="stackToggle" type="button">
+                <span class="label" data-i18n="msg.expandAll">展开全部</span>
+                <span class="ico">▼</span>
+            </button>
+        </div>
+        <div class="message-list stacked" id="msgList"></div>
+        <div class="stack-count-tip" id="stackCountTip" style="display:none;"></div>
+    </div>
+    <div class="waterfall-wrap">
+        <h2 class="waterfall-title" data-i18n="gallery.title">精选画廊</h2>
+        <div class="waterfall" id="galleryScroll">
+            <div class="waterfall-item"><img src="./img/13.jpg" alt="椎名真昼"><span class="view-tip" data-i18n="gallery.viewTip">点击查看</span></div>
+            <div class="waterfall-item"><img src="./img/14.jpg" alt="椎名真昼"><span class="view-tip" data-i18n="gallery.viewTip">点击查看</span></div>
+            <div class="waterfall-item"><img src="./img/15.jpg" alt="椎名真昼"><span class="view-tip" data-i18n="gallery.viewTip">点击查看</span></div>
+            <div class="waterfall-item"><img src="./img/16.jpg" alt="椎名真昼"><span class="view-tip" data-i18n="gallery.viewTip">点击查看</span></div>
+            <div class="waterfall-item"><img src="./img/17.jpg" alt="椎名真昼"><span class="view-tip" data-i18n="gallery.viewTip">点击查看</span></div>
+            <div class="waterfall-item"><img src="./img/18.jpg" alt="椎名真昼"><span class="view-tip" data-i18n="gallery.viewTip">点击查看</span></div>
+            <div class="waterfall-item"><img src="./img/19.jpg" alt="椎名真昼"><span class="view-tip" data-i18n="gallery.viewTip">点击查看</span></div>
+            <div class="waterfall-item"><img src="./img/20.jpg" alt="椎名真昼"><span class="view-tip" data-i18n="gallery.viewTip">点击查看</span></div>
+            <div class="waterfall-item"><img src="./img/21.jpg" alt="椎名真昼"><span class="view-tip" data-i18n="gallery.viewTip">点击查看</span></div>
+            <div class="waterfall-item"><img src="./img/22.jpg" alt="椎名真昼"><span class="view-tip" data-i18n="gallery.viewTip">点击查看</span></div>
+            <div class="waterfall-item"><img src="./img/23.jpg" alt="椎名真昼"><span class="view-tip" data-i18n="gallery.viewTip">点击查看</span></div>
+            <div class="waterfall-item"><img src="./img/24.jpg" alt="椎名真昼"><span class="view-tip" data-i18n="gallery.viewTip">点击查看</span></div>
+        </div>
+        <div class="gallery-arrow prev" id="galleryPrev" aria-label="上一张">‹</div>
+        <div class="gallery-arrow next" id="galleryNext" aria-label="下一张">›</div>
+    </div>
+    <!-- 成员页 -->
+    <div class="team-wrap">
+        <h2 class="team-title" data-i18n="team.title">站点成员</h2>
+        <div class="team-grid">
+            <div class="team-card">
+                <div class="team-badge owner" data-i18n="team.owner">站长</div>
+                <div class="team-avatar">
+                    <img src="img/avatar-admin.jpg" alt="站长头像">
+                </div>
+                <div class="team-name">小玖</div>
+                <div class="team-meta">
+                    <div class="meta-item">
+                        <span class="meta-label" data-i18n="team.age">年龄</span>
+                        <span class="meta-value">16</span>
+                    </div>
+                </div>
+                <div class="team-bio">一名16岁的技术爱好者，虽然有些社恐，但我喜欢学习技术，同时也喜欢二次元，尤其喜欢领家天使里面的真昼，并且在6月份开始构整个网站，这其初只是一个想法，后面就渐渐的开发出来了这个网站，也因为这个念想，我有了干下去的动力，关于shinamah是否有人会好奇 来自女主椎名真昼（しいな まひる / Shiina Mahiru）的拼写缩写融合：- Shiina = 椎名（姓氏）Mahiru = 真昼（名字）
+把两个单词去掉间隔、精简拼接为 shinamah，是网站域名的核心由来。</div>
+            </div>
+            <div class="team-card">
+                <div class="team-badge vice" data-i18n="team.vice">副站长</div>
+                <div class="team-avatar">
+                    <img src="img/avatar-sub-admin.jpg" alt="副站长头像">
+                </div>
+                <div class="team-name">志哥</div>
+                <div class="team-meta">
+                    <div class="meta-item">
+                        <span class="meta-label" data-i18n="team.age">年龄</span>
+                        <span class="meta-value">16</span>
+                    </div>
+                </div>
+                <div class="team-bio">我 2009 年出生于四川父母都挺高兴的，结果却得知了一个，有些不同寻常的消息。我患有脑瘫，这意味着我无法正常行走。2017 年，我得到了我人生中的第一台智能手机。第一件事就是下载 QQ，然后我和其他小朋友一样，刷刷视频，看看动画。在机缘巧合之下，我接触到了 网站制作的相关技术。随后在 2022 年的某一天，认识了站长。并因为兴趣，教会了站长建站知识。因此，站长建立了这个网站。</div>
+            </div>
+            <div class="team-card">
+                <div class="team-badge sponsor" data-i18n="team.sponsor">服务器赞助</div>
+                <div class="team-avatar">
+                    <img src="img/avatar-sponsor.jpg" alt="赞助头像">
+                </div>
+                <div class="team-name">雪之下雪乃</div>
+                <div class="team-meta">
+                    <div class="meta-item">
+                        <span class="meta-label" data-i18n="team.age">年龄</span>
+                        <span class="meta-value">18</span>
+                    </div>
+                </div>
+                <div class="team-bio">原始股东 由于很喜欢小玖，所以开始赞助本网站，没有什么问题，不要找原始股东，原始股东要泡小玖</div>
+            </div>
+        </div>
+    </div>
+    <!-- 大图查看器 -->
+    <div class="photo-lightbox" id="photoLightbox">
+        <button class="save-btn" id="lightboxSave" aria-label="保存图片">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <span data-i18n="gallery.save">保存图片</span>
+        </button>
+        <button class="close-btn" id="lightboxClose" aria-label="关闭">×</button>
+        <img id="lightboxImg" src="" alt="大图预览">
+    </div>
+    <!-- 分享弹窗 -->
+    <div class="share-toast-box" id="shareToastBox" data-i18n="share.copySuccess">链接复制成功啦~(≧∇≦)ﾉ</div>
+    <!-- ===== 公告弹窗 ===== -->
+    <div class="announce-mask" id="announceMask">
+        <div class="announce-modal">
+            <div class="announce-icon"><i class="fas fa-bullhorn"></i></div>
+            <h3 class="announce-title" data-i18n="announce.title">站 点 公 告</h3>
+            <div class="announce-date" id="announceDate"></div>
+            <div class="announce-body" id="announceBody"></div>
+            <div class="announce-footer">
+                <button class="announce-btn" id="announceBtn" data-i18n="announce.btn">我 知 道 了</button>
+            </div>
+        </div>
+    </div>
+    <!-- ===== 强制绑定邮箱弹窗 ===== -->
+    <div class="email-bind-mask" id="emailBindMask">
+        <div class="email-bind-modal">
+            <div class="email-bind-icon"><i class="fas fa-envelope-open-text"></i></div>
+            <h3 class="email-bind-title">绑 定 邮 箱</h3>
+            <p class="email-bind-desc">检测到您通过QQ快速登录，为保障账号安全，请绑定电子邮箱。<br>绑定后可使用邮箱找回密码及接收重要通知。</p>
+            <div class="email-bind-form">
+                <div class="email-bind-field">
+                    <input type="email" id="forceBindEmail" placeholder="请输入电子邮箱地址" maxlength="100">
+                </div>
+                <div class="email-bind-field email-bind-code-row">
+                    <input type="text" id="forceBindCode" placeholder="6位验证码" maxlength="6" inputmode="numeric">
+                    <button type="button" id="forceSendCode" class="email-bind-codebtn">获取验证码</button>
+                </div>
+                <div class="email-bind-tip" id="forceBindTip"></div>
+                <button type="button" id="forceBindSubmit" class="email-bind-submit">确 认 绑 定</button>
+            </div>
+        </div>
+    </div>
+    <div class="share-tip-modal" id="shareTip">
+        <p data-i18n="share.wechatTip">请点击微信右上角「···」<br>选择转发好友/朋友圈</p>
+        <button id="closeShareTip" data-i18n="share.know">我知道了</button>
+    </div>
+    <div class="share-mask" id="shareMask">
+        <div class="share-modal">
+            <div class="share-head">
+                <h3 class="share-title" data-i18n="share.title">分享至</h3>
+                <button class="close-btn" id="shareCloseBtn" tabindex="-1"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="share-list">
+                <div class="share-item">
+                    <div class="share-icon-box wx" tabindex="-1" id="shareWx"><i class="fab fa-weixin"></i></div>
+                    <span class="share-text" data-i18n="share.wechat">微信</span>
+                </div>
+                <div class="share-item">
+                    <div class="share-icon-box qq" tabindex="-1" id="shareQq"><i class="fab fa-qq"></i></div>
+                    <span class="share-text" data-i18n="share.qq">QQ</span>
+                </div>
+                <div class="share-item">
+                    <div class="share-icon-box copy" tabindex="-1" id="shareCopy"><i class="fas fa-link"></i></div>
+                    <span class="share-text" data-i18n="share.link">链接</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 举报弹窗 -->
+    <div class="report-modal-overlay" id="reportModal" style="display:none;">
+        <div class="report-modal">
+            <div class="report-modal-header">
+                <h3 data-i18n="report.title">举报留言</h3>
+                <button class="report-modal-close" onclick="closeReportModal()">×</button>
+            </div>
+            <div class="report-modal-body">
+                <p data-i18n="report.reasonTitle">请选择举报原因：</p>
+                <div class="report-reasons">
+                    <label><input type="radio" name="reportReason" value="色情低俗"> <span data-i18n="report.reason1">色情低俗</span></label>
+                    <label><input type="radio" name="reportReason" value="暴力内容"> <span data-i18n="report.reason2">暴力内容</span></label>
+                    <label><input type="radio" name="reportReason" value="违法违规"> <span data-i18n="report.reason3">违法违规</span></label>
+                    <label><input type="radio" name="reportReason" value="人身攻击"> <span data-i18n="report.reason4">人身攻击</span></label>
+                    <label><input type="radio" name="reportReason" value="垃圾广告"> <span data-i18n="report.reason5">垃圾广告</span></label>
+                    <label><input type="radio" name="reportReason" value="其他"> <span data-i18n="report.reason6">其他</span></label>
+                </div>
+            </div>
+            <div class="report-modal-footer">
+                <button class="report-cancel-btn" onclick="closeReportModal()" data-i18n="report.cancel">取消</button>
+                <button class="report-submit-btn" onclick="submitReport()" data-i18n="report.submit">提交举报</button>
+            </div>
+        </div>
+    </div>
+    <!-- 回复弹窗（毛玻璃） -->
+    <div class="reply-modal-overlay" id="replyModal">
+        <div class="reply-modal">
+            <div class="reply-modal-header">
+                <span class="reply-modal-title" id="replyModalTitle" data-i18n="reply.title">回复</span>
+                <button class="reply-modal-close" onclick="closeReplyModal()">×</button>
+            </div>
+            <div class="reply-modal-body">
+                <div class="reply-modal-qq">
+                    <input type="text" id="replyModalQq" data-i18n-placeholder="reply.qqPlaceholder" placeholder="QQ号（可选，获取头像）" oninput="loadReplyModalAvatar(this.value)">
+                    <img class="reply-modal-avatar empty" id="replyModalAvatar" alt="头像">
+                </div>
+                <textarea class="reply-modal-textarea" id="replyModalText" data-i18n-placeholder="reply.contentPlaceholder" placeholder="输入回复内容（3~500字符）..." maxlength="500"></textarea>
+                <div class="reply-modal-emoji-bar">
+                    <button class="emoji-toggle-btn" onclick="toggleEmojiPicker()" data-i18n="reply.emoji">😊 表情</button>
+                    <div class="emoji-picker" id="emojiPicker"></div>
+                </div>
+            </div>
+            <div class="reply-modal-footer">
+                <button class="reply-modal-cancel" onclick="closeReplyModal()" data-i18n="reply.cancel">取消</button>
+                <button class="reply-modal-send" id="replyModalSend" onclick="submitReplyModal()" data-i18n="reply.send">发送</button>
+            </div>
+        </div>
+    </div>
+    
+    <style>
+        .report-modal-overlay{
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .report-modal{
+            background: #fff;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+        .report-modal-header{
+            background: linear-gradient(90deg,#f8c8e0,#e0b8f0);
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #fff;
+        }
+        .report-modal-header h3{
+            margin: 0;
+            font-size: 18px;
+        }
+        .report-modal-close{
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+        .report-modal-body{
+            padding: 24px;
+        }
+        .report-modal-body p{
+            margin: 0 0 16px;
+            font-size: 15px;
+            color: #333;
+        }
+        .report-reasons{
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .report-reasons label{
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #555;
+            cursor: pointer;
+        }
+        .report-reasons input[type="radio"]{
+            width: 16px;
+            height: 16px;
+        }
+        .report-modal-footer{
+            padding: 16px 24px;
+            background: #f8f8f8;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+        .report-cancel-btn{
+            padding: 8px 20px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            color: #666;
+        }
+        .report-cancel-btn:hover{
+            background: #f0f0f0;
+        }
+        .report-submit-btn{
+            padding: 8px 24px;
+            background: linear-gradient(90deg,#f8c8e0,#e0b8f0);
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            color: #fff;
+        }
+        .report-submit-btn:hover{
+            opacity: 0.9;
+        }
+    </style>
+    <footer>
+        <div class="footer-text">
+        <p class="copyright" data-i18n="footer.copyright">真昼小站 © 2026 建湖梦玖信息技术工作室（个体工商户） All Rights Reserved</p>
+        <p class="footer-link-group">
+        <span data-i18n="footer.tip">本站仅作动漫分享交流</span>
+        <span>|</span>
+        <a href="#" target="_blank" rel="noopener noreferrer" data-i18n="footer.bilibili">作者B站</a>
+        <span>|</span>
+        <!-- 如已为站点完成 ICP 备案，请在此处替换为你的备案号 -->
+        <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">ICP备案号</a>
+        <span>|</span>
+        <a href="https://icp.gov.moe/" target="_blank" rel="noopener noreferrer">萌ICP备号</a>
+    </p>
+</div>
+    </footer>
+
+    <script>
+        // ==================== 语言国际化配置 ====================
+        const i18nData = {
+            "zh-CN": {
+                "nav.home": "首页", "nav.wallpaper": "壁纸", "nav.login": "登入", "nav.profile": "个人资料",
+                "nav.about": "关于", "nav.statement": "声明", "nav.message": "留言板", "nav.donate": "赞赏",
+                "nav.friends": "友链", "nav.language": "语言", "status.notLogin": "未登录",
+                "welcome.title": "欢迎来到真昼小站",
+                "welcome.desc": "真昼爱好者小站，名称取自动漫《邻家天使》女主椎名真昼，是个人向二次元小型站点",
+                "welcome.scrollHint": "向下滚动探索更多",
+                "welcome.hideVideo": "隐藏视频", "welcome.showVideo": "显示视频",
+                "tab.character": "人物介绍", "tab.anime": "动漫介绍", "tab.music": "音乐介绍",
+                "char.mahiru.name": "椎名真昼",
+                "char.mahiru.desc": "本作女主，全校公认“天使大人”，成绩、体育、家务全能。独居在男主隔壁，外表完美高冷，内心缺爱孤独，温柔细心，主动照料藤宫周的生活，慢慢对周动心。",
+                "char.shu.name": "藤宫周",
+                "char.shu.desc": "本作男主，高一独居男生，不擅家务，生活懒散。性格内敛温柔，雨天借伞与真昼结缘，被真昼照顾渐渐被惯成“废人”，双向治愈彼此。",
+                "char.itsuki.name": "赤泽树",
+                "char.itsuki.desc": "藤宫周的挚友，开朗帅气，情商高，是男女主感情头号助攻。与白河千岁是情侣，善于观察两人暧昧氛围，经常主动撮合周与真昼。",
+                "char.chitose.name": "白河千岁",
+                "char.chitose.desc": "真昼的闺蜜，活泼短发少女。性格热情直率，给真昼取名昵称“小真昼”，经常上门围观两人相处，全力助攻真昼与藤宫周。",
+                "anime.title": "关于邻家天使大人",
+                "anime.intro": "《关于我在无意间被隔壁的天使变成废人这件事》简称邻家天使，是由佐伯さん创作的轻小说，插画由はねこと绘制，于2024年动画化。作品主打细腻治愈日常恋爱，无激烈冲突，靠平淡日常打动观众。",
+                "anime.storyTitle": "故事梗概",
+                "anime.story": "男主藤宫周独自租房，生活邋遢。雨天借伞给校花椎名真昼后产生交集，真昼主动帮他打扫做饭，二人朝夕相伴互相治愈，慢慢萌生爱意。",
+                "anime.novelTitle": "原作小说",
+                "anime.novel": "2019年开始连载，常年轻小说榜单前列，文字细腻，重点刻画两人从陌生到双向奔赴的心理变化，配角风趣鲜活。",
+                "anime.staffTitle": "动画制作信息",
+                "anime.staff": "project No.9制作，画风贴合原作插画，配乐舒缓温柔，完整还原原作治愈氛围。",
+                "anime.themeTitle": "作品核心主题",
+                "anime.theme": "孤独者的互相救赎，两人填补彼此内心空缺，学会陪伴与爱人，主打双向奔赴温柔日常。",
+                "music.title": "邻家天使 音乐介绍",
+                "music.intro": "动画全套曲目均为温柔抒情风格，钢琴弦乐为主，氛围感极强。",
+                "music.opTitle": "片头曲：小さな恋のうた",
+                "music.op": "轻快温柔钢琴前奏，歌词描写青涩靠近的心动，搭配两人日常画面。",
+                "music.edTitle": "片尾曲：優しい予感",
+                "music.ed": "安静舒缓纯钢琴打底，适合每集结尾独处心动桥段，广受循环好评。",
+                "music.ostTitle": "OST原声配乐",
+                "music.ost": "分日常轻快、暧昧心动、孤独伤感三类，大量独奏钢琴，干净柔和。",
+                "music.highlightTitle": "配乐制作亮点",
+                "music.highlight": "弱化厚重乐器，平缓旋律，贴合作品温柔治愈内核。",
+                "msg.title": "留言板", "msg.qqPlaceholder": "输入QQ号自动加载头像",
+                "msg.namePlaceholder": "请输入昵称", "msg.contentPlaceholder": "请输入留言内容（3~500字符）",
+                "msg.submit": "提交留言", "msg.submitting": "提交中...",
+                "msg.allTitle": "全部留言", "msg.expandAll": "展开全部", "msg.collapse": "收起",
+                "msg.countTip": "共 {count} 条留言 · 点击卡片或「展开全部」查看",
+                "msg.more": "更多", "msg.reply": "回复", "msg.share": "分享",
+                "msg.report": "举报", "msg.delete": "删除",
+                "msg.submitSuccess": "留言提交成功！", "msg.submitFail": "提交失败，请检查网络或稍后重试",
+                "msg.nameRequired": "请输入昵称", "msg.contentRequired": "请输入留言内容",
+                "msg.contentTooShort": "留言至少3个字符", "msg.contentTooLong": "留言不能超过500字符",
+                "msg.loginRequired": "请登录账号后再发布留言",
+                "msg.deleteConfirm": "确定要删除这条留言吗？",
+                "msg.deleteSuccess": "删除成功", "msg.deleteFail": "删除失败，请检查网络或稍后重试",
+                "share.title": "分享至", "share.wechat": "微信", "share.qq": "QQ", "share.link": "链接",
+                "share.copySuccess": "链接复制成功啦~(≧∇≦)ﾉ", "share.copyFail": "复制失败，请手动复制",
+                "share.wechatTip": "请点击微信右上角「···」<br>选择转发好友/朋友圈",
+                "share.know": "我知道了",
+                "reply.title": "回复 {name}", "reply.qqPlaceholder": "QQ号（可选，获取头像）",
+                "reply.contentPlaceholder": "输入回复内容（3~500字符）...",
+                "reply.emoji": "😊 表情", "reply.cancel": "取消", "reply.send": "发送",
+                "reply.sending": "发送中...", "reply.loginRequired": "请登录账号后再回复",
+                "reply.contentRequired": "请输入回复内容", "reply.contentTooShort": "回复至少3个字符",
+                "reply.contentTooLong": "回复不能超过500字符", "reply.fail": "回复失败，请稍后重试",
+                "report.title": "举报留言", "report.reasonTitle": "请选择举报原因：",
+                "report.reason1": "色情低俗", "report.reason2": "暴力内容", "report.reason3": "违法违规",
+                "report.reason4": "人身攻击", "report.reason5": "垃圾广告", "report.reason6": "其他",
+                "report.cancel": "取消", "report.submit": "提交举报",
+                "report.reasonRequired": "请选择举报原因", "report.loginRequired": "请先登录",
+                "report.fail": "举报失败，请检查网络或稍后重试",
+                "gallery.title": "精选画廊", "gallery.viewTip": "点击查看",
+                "gallery.save": "保存图片", "gallery.prev": "上一张", "gallery.next": "下一张",
+                "team.title": "站点成员", "team.owner": "站长", "team.vice": "副站长",
+                "team.sponsor": "服务器赞助", "team.age": "年龄",
+                "announce.title": "站 点 公 告", "announce.datePrefix": "发布日期：",
+                "announce.content": "欢迎来到真昼小站～\n本站已上线友链申请功能，点击菜单「友链申请」即可提交申请。\n新增 QQ 登录、留言板堆叠卡片动画、画廊横向滚动等模块。\n如遇问题或建议，欢迎加群交流或留言反馈 (≧∇≦)",
+                "announce.qqTip": "扫码或搜索群号加入真昼小窝交流群",
+                "announce.qqNum": "QQ群号：807414394", "announce.copied": "群号已复制",
+                "announce.btn": "我 知 道 了",
+                "footer.tip": "本站仅作动漫分享交流", "footer.bilibili": "作者B站",
+                "footer.copyright": "真昼小站 © 2026 建湖梦玖信息技术工作室（个体工商户） All Rights Reserved"
+            },
+            "zh-TW": {
+                "nav.home": "首頁", "nav.wallpaper": "桌布", "nav.login": "登入", "nav.profile": "個人資料",
+                "nav.about": "關於", "nav.statement": "聲明", "nav.message": "留言板", "nav.donate": "贊助",
+                "nav.friends": "友鏈", "nav.language": "語言", "status.notLogin": "未登入",
+                "welcome.title": "歡迎來到真晝小站",
+                "welcome.desc": "真晝愛好者小站，名稱取自動漫《鄰家天使》女主椎名真晝，是個人向二次元小型網站",
+                "welcome.scrollHint": "向下滾動探索更多",
+                "welcome.hideVideo": "隱藏影片", "welcome.showVideo": "顯示影片",
+                "tab.character": "人物介紹", "tab.anime": "動漫介紹", "tab.music": "音樂介紹",
+                "char.mahiru.name": "椎名真晝",
+                "char.mahiru.desc": "本作女主，全校公認「天使大人」，成績、體育、家務全能。獨居在男主隔壁，外表完美高冷，內心缺愛孤獨，溫柔細心，主動照料藤宮周的生活，慢慢對周動心。",
+                "char.shu.name": "藤宮周",
+                "char.shu.desc": "本作男主，高一獨居男生，不擅家務，生活懶散。性格內斂溫柔，雨天借傘與真晝結緣，被真晝照顧漸漸被慣成「廢人」，雙向治愈彼此。",
+                "char.itsuki.name": "赤澤樹",
+                "char.itsuki.desc": "藤宮周的摯友，開朗帥氣，情商高，是男女主感情頭號助攻。與白河千歲是情侶，善於觀察兩人曖昧氛圍，經常主動撮合周與真晝。",
+                "char.chitose.name": "白河千歲",
+                "char.chitose.desc": "真晝的閨蜜，活潑短髮少女。性格熱情直率，給真晝取名暱稱「小真晝」，經常上門圍觀兩人相處，全力助攻真晝與藤宮周。",
+                "anime.title": "關於鄰家天使大人",
+                "anime.intro": "《關於我在無意間被隔壁的天使變成廢人這件事》簡稱鄰家天使，是由佐伯さん創作的輕小說，插畫由はねこと繪製，於2024年動畫化。作品主打細膩治愈日常戀愛，無激烈衝突，靠平淡日常打動觀眾。",
+                "anime.storyTitle": "故事大綱",
+                "anime.story": "男主藤宮周獨自租屋，生活邋遢。雨天借傘給校花椎名真晝後產生交集，真晝主動幫他打掃做飯，二人朝夕相伴互相治愈，慢慢萌生愛意。",
+                "anime.novelTitle": "原作小說",
+                "anime.novel": "2019年開始連載，常年轻小說榜單前列，文字細膩，重點刻畫兩人從陌生到雙向奔赴的心理變化，配角風趣鮮活。",
+                "anime.staffTitle": "動畫製作資訊",
+                "anime.staff": "project No.9製作，畫風貼合原作插畫，配樂舒緩溫柔，完整還原原作治愈氛圍。",
+                "anime.themeTitle": "作品核心主題",
+                "anime.theme": "孤獨者的互相救贖，兩人填補彼此內心空缺，學會陪伴與愛人，主打雙向奔赴溫柔日常。",
+                "music.title": "鄰家天使 音樂介紹",
+                "music.intro": "動畫全套曲目皆為溫柔抒情風格，鋼琴弦樂為主，氛圍感極強。",
+                "music.opTitle": "片頭曲：小さな恋のうた",
+                "music.op": "輕快溫柔鋼琴前奏，歌詞描寫青澀靠近的心動，搭配兩人日常畫面。",
+                "music.edTitle": "片尾曲：優しい予感",
+                "music.ed": "安靜舒緩純鋼琴打底，適合每集結尾獨處心動橋段，廣受循環好評。",
+                "music.ostTitle": "OST原聲配樂",
+                "music.ost": "分日常輕快、曖昧心動、孤獨傷感三類，大量獨奏鋼琴，乾淨柔和。",
+                "music.highlightTitle": "配樂製作亮點",
+                "music.highlight": "弱化厚重樂器，平緩旋律，貼合作品溫柔治愈內核。",
+                "msg.title": "留言板", "msg.qqPlaceholder": "輸入QQ號自動載入頭像",
+                "msg.namePlaceholder": "請輸入暱稱", "msg.contentPlaceholder": "請輸入留言內容（3~500字元）",
+                "msg.submit": "提交留言", "msg.submitting": "提交中...",
+                "msg.allTitle": "全部留言", "msg.expandAll": "展開全部", "msg.collapse": "收起",
+                "msg.countTip": "共 {count} 條留言 · 點擊卡片或「展開全部」查看",
+                "msg.more": "更多", "msg.reply": "回覆", "msg.share": "分享",
+                "msg.report": "檢舉", "msg.delete": "刪除",
+                "msg.submitSuccess": "留言提交成功！", "msg.submitFail": "提交失敗，請檢查網路或稍後重試",
+                "msg.nameRequired": "請輸入暱稱", "msg.contentRequired": "請輸入留言內容",
+                "msg.contentTooShort": "留言至少3個字元", "msg.contentTooLong": "留言不能超過500字元",
+                "msg.loginRequired": "請登入帳號後再發布留言",
+                "msg.deleteConfirm": "確定要刪除這條留言嗎？",
+                "msg.deleteSuccess": "刪除成功", "msg.deleteFail": "刪除失敗，請檢查網路或稍後重試",
+                "share.title": "分享至", "share.wechat": "WeChat", "share.qq": "QQ", "share.link": "連結",
+                "share.copySuccess": "連結複製成功啦~(≧∇≦)ﾉ", "share.copyFail": "複製失敗，請手動複製",
+                "share.wechatTip": "請點擊微信右上角「···」<br>選擇轉發好友/朋友圈",
+                "share.know": "我知道了",
+                "reply.title": "回覆 {name}", "reply.qqPlaceholder": "QQ號（可選，獲取頭像）",
+                "reply.contentPlaceholder": "輸入回覆內容（3~500字元）...",
+                "reply.emoji": "😊 表情", "reply.cancel": "取消", "reply.send": "發送",
+                "reply.sending": "發送中...", "reply.loginRequired": "請登入帳號後再回覆",
+                "reply.contentRequired": "請輸入回覆內容", "reply.contentTooShort": "回覆至少3個字元",
+                "reply.contentTooLong": "回覆不能超過500字元", "reply.fail": "回覆失敗，請稍後重試",
+                "report.title": "檢舉留言", "report.reasonTitle": "請選擇檢舉原因：",
+                "report.reason1": "色情低俗", "report.reason2": "暴力內容", "report.reason3": "違法違規",
+                "report.reason4": "人身攻擊", "report.reason5": "垃圾廣告", "report.reason6": "其他",
+                "report.cancel": "取消", "report.submit": "提交檢舉",
+                "report.reasonRequired": "請選擇檢舉原因", "report.loginRequired": "請先登入",
+                "report.fail": "檢舉失敗，請檢查網路或稍後重試",
+                "gallery.title": "精選畫廊", "gallery.viewTip": "點擊查看",
+                "gallery.save": "儲存圖片", "gallery.prev": "上一張", "gallery.next": "下一張",
+                "team.title": "站點成員", "team.owner": "站長", "team.vice": "副站長",
+                "team.sponsor": "伺服器贊助", "team.age": "年齡",
+                "announce.title": "站 點 公 告", "announce.datePrefix": "發布日期：",
+                "announce.content": "歡迎來到真晝小站～\n本站已上線友鏈申請功能，點擊選單「友鏈申請」即可提交申請。\n新增 QQ 登入、留言板堆疊卡片動畫、畫廊橫向捲動等模組。\n如遇問題或建議，歡迎加群交流或留言回饋 (≧∇≦)",
+                "announce.qqTip": "掃碼或搜尋群號加入真晝小窩交流群",
+                "announce.qqNum": "QQ群號：807414394", "announce.copied": "群號已複製",
+                "announce.btn": "我 知 道 了",
+                "footer.tip": "本站僅作動漫分享交流", "footer.bilibili": "作者B站",
+                "footer.copyright": "真晝小站 © 2026 建湖夢玖信息技術工作室（個體工商戶） All Rights Reserved"
+            },
+            "en": {
+                "nav.home": "Home", "nav.wallpaper": "Wallpaper", "nav.login": "Login", "nav.profile": "Profile",
+                "nav.about": "About", "nav.statement": "Statement", "nav.message": "Message Board", "nav.donate": "Donate",
+                "nav.friends": "Links", "nav.language": "Language", "status.notLogin": "Not logged in",
+                "welcome.title": "Welcome to Mahiru Site",
+                "welcome.desc": "A fan site for Mahiru fans, named after Shiina Mahiru, the heroine of \"The Angel Next Door Spoils Me Rotten\". A personal anime-themed website.",
+                "welcome.scrollHint": "Scroll down to explore more",
+                "welcome.hideVideo": "Hide Video", "welcome.showVideo": "Show Video",
+                "tab.character": "Characters", "tab.anime": "Anime Info", "tab.music": "Music",
+                "char.mahiru.name": "Shiina Mahiru",
+                "char.mahiru.desc": "The heroine, known as the \"Angel\" by the whole school. Excels in academics, sports and housework. Lives alone next to the male lead. Though she looks perfect and cold outside, she is lonely inside. Gentle and caring, she takes care of Amane's life and gradually falls for him.",
+                "char.shu.name": "Fujimiya Amane",
+                "char.shu.desc": "The male lead, a first-year high school student living alone. Not good at housework and lives a messy life. Introverted and gentle, he met Mahiru after lending her an umbrella on a rainy day. They heal each other as they spend time together.",
+                "char.itsuki.name": "Akazawa Itsuki",
+                "char.itsuki.desc": "Amane's best friend, cheerful and handsome with high EQ. The top matchmaker for the main couple. Dating Chitose, he notices the romantic atmosphere and often tries to bring Amane and Mahiru together.",
+                "char.chitose.name": "Shirakawa Chitose",
+                "char.chitose.desc": "Mahiru's best friend, an energetic girl with short hair. Outgoing and straightforward, she nicknames Mahiru \"Mahiru-chan\". She often visits and fully supports Mahiru and Amane's relationship.",
+                "anime.title": "About The Angel Next Door",
+                "anime.intro": "\"The Angel Next Door Spoils Me Rotten\" is a light novel by Saeki-san with illustrations by Hanekoto, adapted into anime in 2024. It focuses on delicate and healing daily romance with no intense conflicts.",
+                "anime.storyTitle": "Story Summary",
+                "anime.story": "Amane Fujimiya lives alone in a messy apartment. After lending his umbrella to Mahiru Shiina on a rainy day, they get to know each other. Mahiru cleans and cooks for him, and they gradually fall in love while healing each other.",
+                "anime.novelTitle": "Original Light Novel",
+                "anime.novel": "Serialized since 2019, consistently ranked top in light novel charts. With delicate writing, it portrays the psychological changes from strangers to lovers, with lively supporting characters.",
+                "anime.staffTitle": "Anime Production",
+                "anime.staff": "Produced by project No.9. Art style matches the original illustrations, with gentle soundtrack that fully restores the healing atmosphere of the original work.",
+                "anime.themeTitle": "Core Theme",
+                "anime.theme": "Mutual redemption of lonely souls. Two people fill the void in each other's hearts, learn to accompany and love each other.",
+                "music.title": "Music of The Angel Next Door",
+                "music.intro": "All tracks are gentle and lyrical, mainly piano and strings, with a strong atmospheric sense.",
+                "music.opTitle": "Opening: Chiisana Koi no Uta",
+                "music.op": "Light and gentle piano intro. Lyrics describe the青涩 heartbeat of getting closer, matching the daily scenes of the two.",
+                "music.edTitle": "Ending: Yasashii Yokan",
+                "music.ed": "Quiet and soothing pure piano background. Perfect for the ending heart-touching scenes of each episode, widely loved by fans.",
+                "music.ostTitle": "Original Soundtrack",
+                "music.ost": "Three categories: cheerful daily, romantic heartbeat, and lonely sadness. Lots of solo piano pieces, clean and soft.",
+                "music.highlightTitle": "Soundtrack Highlights",
+                "music.highlight": "Soft melodies without heavy instruments, fitting the gentle and healing core of the work.",
+                "msg.title": "Message Board", "msg.qqPlaceholder": "Enter QQ number to load avatar",
+                "msg.namePlaceholder": "Enter your nickname", "msg.contentPlaceholder": "Enter your message (3~500 characters)",
+                "msg.submit": "Submit", "msg.submitting": "Submitting...",
+                "msg.allTitle": "All Messages", "msg.expandAll": "Expand All", "msg.collapse": "Collapse",
+                "msg.countTip": "{count} messages total · Click card or \"Expand All\" to view",
+                "msg.more": "More", "msg.reply": "Reply", "msg.share": "Share",
+                "msg.report": "Report", "msg.delete": "Delete",
+                "msg.submitSuccess": "Message submitted successfully!", "msg.submitFail": "Submission failed, please check network and try again",
+                "msg.nameRequired": "Please enter your nickname", "msg.contentRequired": "Please enter message content",
+                "msg.contentTooShort": "Message must be at least 3 characters", "msg.contentTooLong": "Message cannot exceed 500 characters",
+                "msg.loginRequired": "Please login to post a message",
+                "msg.deleteConfirm": "Are you sure you want to delete this message?",
+                "msg.deleteSuccess": "Deleted successfully", "msg.deleteFail": "Delete failed, please check network and try again",
+                "share.title": "Share to", "share.wechat": "WeChat", "share.qq": "QQ", "share.link": "Copy Link",
+                "share.copySuccess": "Link copied successfully~", "share.copyFail": "Copy failed, please copy manually",
+                "share.wechatTip": "Please click the「···」in the top right corner of WeChat<br>and share with friends or Moments",
+                "share.know": "Got it",
+                "reply.title": "Reply to {name}", "reply.qqPlaceholder": "QQ number (optional, for avatar)",
+                "reply.contentPlaceholder": "Enter reply (3~500 characters)...",
+                "reply.emoji": "😊 Emoji", "reply.cancel": "Cancel", "reply.send": "Send",
+                "reply.sending": "Sending...", "reply.loginRequired": "Please login to reply",
+                "reply.contentRequired": "Please enter reply content", "reply.contentTooShort": "Reply must be at least 3 characters",
+                "reply.contentTooLong": "Reply cannot exceed 500 characters", "reply.fail": "Reply failed, please try again later",
+                "report.title": "Report Message", "report.reasonTitle": "Please select a reason:",
+                "report.reason1": "Pornography & Vulgarity", "report.reason2": "Violent Content", "report.reason3": "Illegal Content",
+                "report.reason4": "Personal Attack", "report.reason5": "Spam & Ads", "report.reason6": "Other",
+                "report.cancel": "Cancel", "report.submit": "Submit Report",
+                "report.reasonRequired": "Please select a report reason", "report.loginRequired": "Please login first",
+                "report.fail": "Report failed, please check network and try again",
+                "gallery.title": "Featured Gallery", "gallery.viewTip": "Click to view",
+                "gallery.save": "Save Image", "gallery.prev": "Previous", "gallery.next": "Next",
+                "team.title": "Site Team", "team.owner": "Admin", "team.vice": "Co-admin",
+                "team.sponsor": "Server Sponsor", "team.age": "Age",
+                "announce.title": "SITE ANNOUNCEMENT", "announce.datePrefix": "Published: ",
+                "announce.content": "Welcome to Mahiru Site~\nFriend link application is now online, click \"Links\" in the menu to apply.\nNew features: QQ login, stacked message animation, horizontal gallery scrolling, etc.\nFeel free to join our group or leave a message if you have suggestions (≧∇≦)",
+                "announce.qqTip": "Scan the QR code or search the group number to join our community",
+                "announce.qqNum": "QQ Group: 807414394", "announce.copied": "Copied!",
+                "announce.btn": "GOT IT",
+                "footer.tip": "This site is for anime sharing and communication only", "footer.bilibili": "Author's Bilibili",
+                "footer.copyright": "Mahiru Site © 2026 Jianhu Mengjiu Information Technology Studio (Sole Proprietorship) All Rights Reserved"
+            },
+            "ja": {
+                "nav.home": "ホーム", "nav.wallpaper": "壁紙", "nav.login": "ログイン", "nav.profile": "プロフィール",
+                "nav.about": "概要", "nav.statement": "免責事項", "nav.message": "掲示板", "nav.donate": "支援",
+                "nav.friends": "リンク", "nav.language": "言語", "status.notLogin": "未ログイン",
+                "welcome.title": "まひるサイトへようこそ",
+                "welcome.desc": "椎名まひるファンサイト。アニメ『お隣の天使様にいつの間にか駄目人間にされていた件』のヒロインにちなんだ個人向け二次元サイトです。",
+                "welcome.scrollHint": "下にスクロールして探索しよう",
+                "welcome.hideVideo": "動画を隠す", "welcome.showVideo": "動画を表示",
+                "tab.character": "キャラクター", "tab.anime": "アニメ紹介", "tab.music": "音楽紹介",
+                "char.mahiru.name": "椎名 まひる",
+                "char.mahiru.desc": "本作のヒロイン。全校で「天使様」と呼ばれ、成績・スポーツ・家事すべてに秀でる。男主の隣に一人暮らし。完璧で冷たいように見えるが内心は寂しがり屋。優しく細やかで、周の世話を進んでするうちに次第に惹かれていく。",
+                "char.shu.name": "藤宮 周",
+                "char.shu.desc": "本作の男主。高校1年生で一人暮らし。家事が苦手で生活はだらしない。内気で優しい性格。雨の日に傘を貸したことでまひると知り合い、二人で互いを癒やし合う関係に。",
+                "char.itsuki.name": "赤澤 樹",
+                "char.itsuki.desc": "周の親友。明るくイケメンで空気が読める。二人の恋の最大の応援団。千歳と恋人同士。周とまひるの曖昧な雰囲気にいち早く気づき、仲を取り持とうとする。",
+                "char.chitose.name": "白河 千歳",
+                "char.chitose.desc": "まひるの親友。活発なショートカットの少女。明るく率直な性格で、まひるを「まひるちゃん」と呼ぶ。よく遊びに来ては二人の様子を見に来て、恋を全力で応援する。",
+                "anime.title": "お隣の天使様について",
+                "anime.intro": "『お隣の天使様にいつの間にか駄目人間にされていた件』は佐伯さん原作、はねことイラストのライトノベル。2024年にアニメ化。激しい展開はなく、繊細で癒やしのある日常恋愛もの。",
+                "anime.storyTitle": "あらすじ",
+                "anime.story": "一人暮らしの高校生・藤宮周は生活がだらしなかった。雨の日に校花の椎名まひるに傘を貸したことがきっかけで交流が生まれ、毎日を共に過ごすうちに恋心が芽生えていく。",
+                "anime.novelTitle": "原作小説",
+                "anime.novel": "2019年より連載開始。常にラノベランキング上位に入る人気作。繊細な筆致で、二人が他人から両想いになるまでの心理変化が丁寧に描かれている。",
+                "anime.staffTitle": "アニメ制作",
+                "anime.staff": "制作はproject No.9。原作イラストに寄せた画風に、穏やかで優しい楽曲が合わさり、原作の癒やしの雰囲気を忠実に再現。",
+                "anime.themeTitle": "作品のテーマ",
+                "anime.theme": "孤独な者同士の相互救済。二人が互いの心の隙間を埋め、寄り添い、愛することを学んでいく。両想いの優しい日常を中心に描いた物語。",
+                "music.title": "お隣の天使様 音楽紹介",
+                "music.intro": "アニメの楽曲は全編優しく抒情的で、ピアノとストリングスを中心に雰囲気たっぷりに仕上がっている。",
+                "music.opTitle": "オープニング：小さな恋のうた",
+                "music.op": "軽やかで優しいピアノの前奏。二人の日常の映像に合わせ、近づいていく青臭いときめきが歌詞に込められている。",
+                "music.edTitle": "エンディング：優しい予感",
+                "music.ed": "静かで穏やかなピアノ主体の曲。各話のラストのときめくシーンにぴったりで、リピートする人が続出。",
+                "music.ostTitle": "サウンドトラック",
+                "music.ost": "日常の明るい曲、ときめく恋の曲、孤独で切ない曲の3種類。ソロピアノの曲が多く、清潔感があって柔らかい。",
+                "music.highlightTitle": "音楽の魅力",
+                "music.highlight": "重厚な楽器を抑え、ゆったりとしたメロディが、作品の優しく癒やされる世界観に寄り添っている。",
+                "msg.title": "掲示板", "msg.qqPlaceholder": "QQ番号を入力するとアバターが読み込まれます",
+                "msg.namePlaceholder": "ニックネームを入力してください", "msg.contentPlaceholder": "メッセージを入力（3～500文字）",
+                "msg.submit": "送信する", "msg.submitting": "送信中...",
+                "msg.allTitle": "全メッセージ", "msg.expandAll": "すべて表示", "msg.collapse": "折りたたむ",
+                "msg.countTip": "計 {count} 件 · カードをクリックまたは「すべて表示」でご覧ください",
+                "msg.more": "その他", "msg.reply": "返信", "msg.share": "共有",
+                "msg.report": "通報", "msg.delete": "削除",
+                "msg.submitSuccess": "メッセージを送信しました！", "msg.submitFail": "送信に失敗しました。ネットワークを確認して後でもう一度",
+                "msg.nameRequired": "ニックネームを入力してください", "msg.contentRequired": "メッセージ内容を入力してください",
+                "msg.contentTooShort": "メッセージは3文字以上にしてください", "msg.contentTooLong": "メッセージは500文字以内にしてください",
+                "msg.loginRequired": "ログインしてから投稿してください",
+                "msg.deleteConfirm": "このメッセージを削除してもよろしいですか？",
+                "msg.deleteSuccess": "削除しました", "msg.deleteFail": "削除に失敗しました。ネットワークを確認して後でもう一度",
+                "share.title": "共有先", "share.wechat": "WeChat", "share.qq": "QQ", "share.link": "リンクをコピー",
+                "share.copySuccess": "リンクをコピーしました～", "share.copyFail": "コピーに失敗しました。手動でコピーしてください",
+                "share.wechatTip": "WeChatの右上「···」をタップして<br>友達やタイムラインに共有してください",
+                "share.know": "わかった",
+                "reply.title": "{name} に返信", "reply.qqPlaceholder": "QQ番号（任意、アバター表示用）",
+                "reply.contentPlaceholder": "返信内容を入力（3～500文字）...",
+                "reply.emoji": "😊 絵文字", "reply.cancel": "キャンセル", "reply.send": "送信",
+                "reply.sending": "送信中...", "reply.loginRequired": "ログインしてから返信してください",
+                "reply.contentRequired": "返信内容を入力してください", "reply.contentTooShort": "返信は3文字以上にしてください",
+                "reply.contentTooLong": "返信は500文字以内にしてください", "reply.fail": "返信に失敗しました。後でもう一度お試しください",
+                "report.title": "メッセージを通報", "report.reasonTitle": "通報理由を選択してください：",
+                "report.reason1": "わいせつ・低俗", "report.reason2": "暴力的な内容", "report.reason3": "違法な内容",
+                "report.reason4": "個人攻撃", "report.reason5": "スパム・広告", "report.reason6": "その他",
+                "report.cancel": "キャンセル", "report.submit": "通報を送信",
+                "report.reasonRequired": "通報理由を選択してください", "report.loginRequired": "先にログインしてください",
+                "report.fail": "通報に失敗しました。ネットワークを確認して後でもう一度",
+                "gallery.title": "ギャラリー", "gallery.viewTip": "クリックで表示",
+                "gallery.save": "画像を保存", "gallery.prev": "前へ", "gallery.next": "次へ",
+                "team.title": "サイトメンバー", "team.owner": "管理者", "team.vice": "副管理者",
+                "team.sponsor": "サーバー支援者", "team.age": "年齢",
+                "announce.title": "お知らせ", "announce.datePrefix": "公開日：",
+                "announce.content": "まひるサイトへようこそ～\nリンク申請機能を追加しました。メニューの「リンク」から申請できます。\nQQログイン、掲示板カードアニメーション、横スクロールギャラリーなどの新機能を追加しました。\n不具合やご意見があればグループに参加するかメッセージでお知らせください (≧∇≦)",
+                "announce.qqTip": "QRコードを読み取るか、グループ番号を検索してコミュニティに参加しよう",
+                "announce.qqNum": "QQグループ：807414394", "announce.copied": "コピーしました",
+                "announce.btn": "わかった",
+                "footer.tip": "このサイトはアニメの共有・交流のみを目的としています", "footer.bilibili": "作者のビリビリ",
+                "footer.copyright": "Mahiru Site © 2026 建湖夢玖情報技術工作室（個人工商業） All Rights Reserved"
+            }
+        };
+
+        // 一次性清理旧版语言设置（无版本号的旧存储一律清除）
+        if (localStorage.getItem('site_lang') && !localStorage.getItem('site_lang_ver')) {
+            localStorage.removeItem('site_lang');
+        }
+        var currentLang = localStorage.getItem('site_lang') || 'zh-CN';
+
+        // 翻译函数，支持占位符
+        function t(key, params = {}) {
+            const text = i18nData[currentLang]?.[key] || i18nData['zh-CN'][key] || key;
+            return text.replace(/\{(\w+)\}/g, (_, k) => params[k] || '');
+        }
+
+        // 更新页面所有翻译
+        function updatePageLang() {
+            // 更新普通文本
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                el.textContent = t(key);
+            });
+
+            // 更新placeholder
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                el.placeholder = t(key);
+            });
+
+            // 更新HTML lang属性
+            document.documentElement.lang = currentLang;
+
+            // 更新语言菜单高亮
+            document.querySelectorAll('.lang-item').forEach(item => {
+                item.classList.toggle('lang-active', item.dataset.lang === currentLang);
+            });
+
+            // 重新渲染登录状态
+            renderLoginStatus();
+            // 重新渲染留言列表（更新按钮文本）
+            if (typeof renderList === 'function') renderList();
+            // 更新堆叠提示
+            if (typeof applyStack === 'function') applyStack();
+            // 更新公告内容
+            updateAnnounceContent();
+            // 更新视频按钮文本状态
+            updateVideoBtnText();
+        }
+
+        // 切换语言（带淡入淡出动画）
+        function switchLang(lang) {
+            if (lang === currentLang) return;
+            
+            document.body.classList.add('lang-switching');
+            
+            setTimeout(() => {
+                currentLang = lang;
+                localStorage.setItem('site_lang', lang);
+                localStorage.setItem('site_lang_ver', '3');
+                updatePageLang();
+                
+                setTimeout(() => {
+                    document.body.classList.remove('lang-switching');
+                }, 50);
+            }, 350);
+        }
+
+        // 初始化语言
+        function initI18n() {
+            // 绑定语言切换事件
+            document.querySelectorAll('.lang-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    switchLang(item.dataset.lang);
+                    // 移动端收起子菜单
+                    const submenu = document.getElementById('langSubmenu');
+                    if (submenu) submenu.classList.remove('open');
+                });
+            });
+
+            updatePageLang();
+        }
+
+        // 更新视频按钮文本
+        function updateVideoBtnText() {
+            const videoWrap = document.getElementById('welcomeVideoWrap');
+            const toggleText = document.getElementById('videoToggleText');
+            if (!videoWrap || !toggleText) return;
+            const hidden = videoWrap.classList.contains('hidden');
+            toggleText.textContent = hidden ? t('welcome.showVideo') : t('welcome.hideVideo');
+        }
+
+        // 更新公告内容
+        function updateAnnounceContent() {
+            const body = document.getElementById('announceBody');
+            const dateEl = document.getElementById('announceDate');
+            if (!body) return;
+            
+            const content = t('announce.content').replace(/\n/g, '<br>');
+            const qqHtml = `
+                <div class="announce-qq">
+                    <img class="announce-qq-img" src="img/qq-group-qr.png" alt="QQ群二维码">
+                    <div class="announce-qq-num" id="announceQqNum" title="点击复制群号"><i class="fab fa-qq"></i> ${t('announce.qqNum')}</div>
+                    <div class="announce-qq-tip">${t('announce.qqTip')}</div>
+                </div>
+            `;
+            body.innerHTML = content + qqHtml;
+            
+            if (dateEl) dateEl.textContent = t('announce.datePrefix') + '2026-08-12';
+
+            // 重新绑定复制群号事件
+            bindAnnounceQqCopy();
+        }
+
+        function bindAnnounceQqCopy() {
+            const qqNum = document.getElementById('announceQqNum');
+            if (!qqNum) return;
+            qqNum.onclick = function() {
+                const text = '807414394';
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).then(function(){
+                        qqNum.innerHTML = '<i class="fas fa-check"></i> ' + t('announce.copied');
+                        setTimeout(function(){ qqNum.innerHTML = '<i class="fab fa-qq"></i> ' + t('announce.qqNum'); }, 1500);
+                    }).catch(function(){ fallbackCopy(text, qqNum); });
+                } else {
+                    fallbackCopy(text, qqNum);
+                }
+            };
+        }
+
+        function fallbackCopy(text, el) {
+            var ta = document.createElement('textarea');
+            ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+            document.body.appendChild(ta); ta.select();
+            try { 
+                document.execCommand('copy'); 
+                el.innerHTML = '<i class="fas fa-check"></i> ' + t('announce.copied');
+                setTimeout(function(){ el.innerHTML = '<i class="fab fa-qq"></i> ' + t('announce.qqNum'); }, 1500);
+            } catch(e){}
+            document.body.removeChild(ta);
+        }
+    </script>
+
+    <script>
+        // 画廊横向滚动箭头控制
+        (function(){
+            const scroll = document.getElementById('galleryScroll');
+            const prevBtn = document.getElementById('galleryPrev');
+            const nextBtn = document.getElementById('galleryNext');
+            if(!scroll || !prevBtn || !nextBtn) return;
+            function getStep(){
+                const item = scroll.querySelector('.waterfall-item');
+                if(!item) return 300;
+                const gap = parseInt(getComputedStyle(scroll).gap) || 18;
+                return item.offsetWidth + gap;
+            }
+            function updateBtn(){
+                const maxScroll = scroll.scrollWidth - scroll.clientWidth;
+                if(scroll.scrollLeft <= 2){
+                    prevBtn.classList.add('disabled');
+                } else {
+                    prevBtn.classList.remove('disabled');
+                }
+                if(scroll.scrollLeft >= maxScroll - 2){
+                    nextBtn.classList.add('disabled');
+                } else {
+                    nextBtn.classList.remove('disabled');
+                }
+            }
+            prevBtn.addEventListener('click', function(){
+                scroll.scrollBy({ left: -getStep(), behavior: 'smooth' });
+            });
+            nextBtn.addEventListener('click', function(){
+                scroll.scrollBy({ left: getStep(), behavior: 'smooth' });
+            });
+            scroll.addEventListener('scroll', updateBtn, { passive: true });
+            window.addEventListener('resize', updateBtn);
+            updateBtn();
+            if(scroll.scrollWidth <= scroll.clientWidth){
+                prevBtn.style.display = 'none';
+                nextBtn.style.display = 'none';
+            }
+        })();
+        // 照片墙大图查看器
+        (function(){
+            const items = document.querySelectorAll('.waterfall-item');
+            const lightbox = document.getElementById('photoLightbox');
+            const lightboxImg = document.getElementById('lightboxImg');
+            const closeBtn = document.getElementById('lightboxClose');
+            const saveBtn = document.getElementById('lightboxSave');
+            if(!items.length || !lightbox) return;
+            function openLightbox(src){
+                if(!src) return;
+                lightboxImg.removeAttribute('width');
+                lightboxImg.removeAttribute('height');
+                lightboxImg.style.width = '';
+                lightboxImg.style.height = '';
+                lightboxImg.style.transform = '';
+                lightboxImg.removeAttribute('style');
+                lightboxImg.src = src;
+                lightbox.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            }
+            items.forEach(function(item){
+                item.addEventListener('click', function(e){
+                    if(e.target.classList && (e.target.classList.contains('gallery-arrow'))) return;
+                    const img = item.querySelector('img');
+                    if(!img) return;
+                    e.stopPropagation();
+                    openLightbox(img.getAttribute('src') || img.src);
+                });
+            });
+            function closeLightbox(){
+                lightbox.classList.remove('show');
+                document.body.style.overflow = '';
+                setTimeout(function(){ lightboxImg.src = ''; }, 300);
+            }
+            closeBtn.addEventListener('click', function(e){ e.stopPropagation(); closeLightbox(); });
+            saveBtn.addEventListener('click', function(e){ e.stopPropagation(); });
+            lightbox.addEventListener('click', function(e){
+                if(e.target === lightbox || e.target === lightboxImg) closeLightbox();
+            });
+            document.addEventListener('keydown', function(e){
+                if(e.key === 'Escape' && lightbox.classList.contains('show')) closeLightbox();
+            });
+            saveBtn.addEventListener('click', function(){
+                const src = lightboxImg.src;
+                if(!src) return;
+                const fileName = src.split('/').pop() || 'image.jpg';
+                fetch(src)
+                    .then(function(res){ return res.blob(); })
+                    .then(function(blob){
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = fileName;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    })
+                    .catch(function(){
+                        window.open(src, '_blank');
+                    });
+            });
+        })();
+    </script>
+    <script>
+        const loginStatusWrap = document.getElementById('loginStatusWrap');
+        const menuLoginBtn = document.getElementById('menuLoginBtn');
+        const welcomeLoginBtn = document.getElementById('welcomeLoginBtn');
+
+        // ===== 欢迎区视频显隐切换 =====
+        (function(){
+            const videoWrap = document.getElementById('welcomeVideoWrap');
+            const toggleBtn = document.getElementById('videoToggleBtn');
+            const toggleText = document.getElementById('videoToggleText');
+            const welcomeBg = document.querySelector('.welcome-bg');
+            const welcomeHero = document.querySelector('.welcome-hero');
+            if(!videoWrap || !toggleBtn) return;
+            // 初始：视频隐藏 → 显示背景图和文字按钮
+            videoWrap.classList.add('hidden');
+            if(toggleText) toggleText.textContent = t('welcome.showVideo');
+            toggleBtn.setAttribute('aria-label', t('welcome.showVideo'));
+            toggleBtn.addEventListener('click', function(){
+                const hidden = videoWrap.classList.toggle('hidden');
+                if(toggleText) toggleText.textContent = hidden ? t('welcome.showVideo') : t('welcome.hideVideo');
+                toggleBtn.setAttribute('aria-label', hidden ? t('welcome.showVideo') : t('welcome.hideVideo'));
+                if(welcomeBg) welcomeBg.style.opacity = hidden ? '1' : '0';
+                if(welcomeHero) welcomeHero.classList.toggle('video-on', !hidden);
+            });
+        })();
+
+        function renderLoginStatus() {
+            const loginUser = localStorage.getItem('siteUser');
+            if(loginUser) {
+                const userInfo = JSON.parse(loginUser);
+                loginStatusWrap.innerHTML = `
+                    <a href="profile.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:inherit;">
+                        <img src="${userInfo.avatar}" alt="用户头像" onerror="this.src='img/5.jpg'">
+                        <span>${userInfo.nickname}</span>
+                    </a>
+                `;
+                if(menuLoginBtn){
+                    menuLoginBtn.href = 'profile.html';
+                    menuLoginBtn.innerHTML = '<i class="fas fa-user" style="width:24px;font-size:22px;text-align:center;"></i><span>' + t('nav.profile') + '</span>';
+                    menuLoginBtn.style.display = '';
+                }
+                if(welcomeLoginBtn) welcomeLoginBtn.style.display = 'none';
+            }else{
+                loginStatusWrap.innerHTML = `<span>${t('status.notLogin')}</span>`;
+                if(menuLoginBtn){
+                    menuLoginBtn.href = 'Login.html';
+                    menuLoginBtn.innerHTML = '<img src="./icon/登入.svg" width="24" height="24" alt="登入" /><span>' + t('nav.login') + '</span>';
+                    menuLoginBtn.style.display = '';
+                }
+                if(welcomeLoginBtn) welcomeLoginBtn.style.display = '';
+            }
+        }
+
+        const menuBtn = document.getElementById('menuBtn');
+        const navMenu = document.getElementById('navMenu');
+        menuBtn.addEventListener('click', function () {
+            navMenu.classList.toggle('show');
+        })
+
+        // 所有带子菜单的项：移动端点击展开
+        var submenuTriggers = document.querySelectorAll('.has-submenu');
+        submenuTriggers.forEach(function(trigger) {
+            trigger.addEventListener('click', function (e) {
+                if (window.innerWidth <= 768 || navMenu.classList.contains('show')) {
+                    e.preventDefault();
+                    var submenu = this.nextElementSibling;
+                    if (submenu && submenu.classList.contains('submenu')) {
+                        submenu.classList.toggle('open');
+                    }
+                }
+            });
+        });
+
+        const tabRadios = document.querySelectorAll('input[name="nav-item-opt"]');
+        const tabItems = document.querySelectorAll('.tab-content');
+        tabRadios.forEach(radio => {
+            radio.onchange = () => {
+                tabItems.forEach(t => t.classList.remove('active'));
+                if(radio.id === 'nav-item-opt-1') tabItems[0].classList.add('active');
+                if(radio.id === 'nav-item-opt-2') tabItems[1].classList.add('active');
+                if(radio.id === 'nav-item-opt-3') tabItems[2].classList.add('active');
+            }
+        })
+
+        const qqInput = document.getElementById('qqNum');
+        const previewAvatar = document.getElementById('previewAvatar');
+        const nameInput = document.getElementById('name');
+        const msgInput = document.getElementById('message');
+        const submitBtn = document.getElementById('submitBtn');
+        const msgList = document.getElementById('msgList');
+        let currentAvatar = '';
+        let isSubmitting = false;
+
+        function htmlEscape(str) {
+            if (!str) return '';
+            return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace( />/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+        }
+        function padZero(num) {
+            return num < 10 ? '0' + num : num;
+        }
+
+        // ===== 留言堆叠卡片：展开 / 收起 =====
+        const stackToggle = document.getElementById('stackToggle');
+        const stackCountTip = document.getElementById('stackCountTip');
+        function applyStack(){
+            const items = msgList.querySelectorAll('.msg-item');
+            if(items.length === 0){
+                msgList.style.height = '';
+                if(stackCountTip) stackCountTip.style.display = 'none';
+                return;
+            }
+            if(stackCountTip){
+                stackCountTip.style.display = '';
+                stackCountTip.textContent = t('msg.countTip', {count: items.length});
+            }
+            if(msgList.classList.contains('stacked')){
+                const peek = window.innerWidth <= 480 ? 12 : 16;
+                const maxLayers = 6;
+                const heights = Array.prototype.map.call(items, it => it.offsetHeight);
+                items.forEach((it, i) => {
+                    const layer = Math.min(i, maxLayers);
+                    const h = heights[i];
+                    const hidden = i >= maxLayers;
+                    if(i === 0){
+                        it.style.marginTop = '';
+                    }else if(hidden){
+                        it.style.marginTop = (-h) + 'px';
+                    }else{
+                        it.style.marginTop = (-(h - peek)) + 'px';
+                    }
+                    it.style.transform = 'scale(' + (1 - layer * 0.012) + ')';
+                    it.style.transformOrigin = 'top center';
+                    it.style.zIndex = String(items.length - i);
+                    it.style.opacity = hidden ? '0' : '1';
+                    it.style.pointerEvents = hidden ? 'none' : '';
+                    it.style.transitionDelay = (Math.min(items.length - 1 - i, 8) * 0.022) + 's';
+                });
+                msgList.style.height = '';
+            }else{
+                items.forEach((it, i) => {
+                    it.style.marginTop = i === 0 ? '' : '16px';
+                    it.style.transform = '';
+                    it.style.zIndex = '';
+                    it.style.opacity = '';
+                    it.style.transformOrigin = '';
+                    it.style.pointerEvents = '';
+                    it.style.transitionDelay = (Math.min(i, 8) * 0.028) + 's';
+                });
+                msgList.style.height = '';
+            }
+        }
+        function toggleStack(expand){
+            const stacked = !expand;
+            msgList.classList.toggle('stacked', stacked);
+            if(stackToggle){
+                stackToggle.classList.toggle('expanded', expand);
+                const label = stackToggle.querySelector('.label');
+                if(label) label.textContent = expand ? t('msg.collapse') : t('msg.expandAll');
+            }
+            applyStack();
+        }
+        if(stackToggle){
+            stackToggle.addEventListener('click', () => {
+                toggleStack(msgList.classList.contains('stacked'));
+            });
+        }
+        msgList.addEventListener('click', (e) => {
+            if(!msgList.classList.contains('stacked')) return;
+            const item = e.target.closest('.msg-item');
+            if(!item) return;
+            if(item === msgList.querySelector('.msg-item')) return;
+            if(e.target.closest('.msg-more-btn') || e.target.closest('.msg-more-menu')) return;
+            toggleStack(true);
+        });
+        let _resizeTimer;
+        window.addEventListener('resize', () => {
+            if(!msgList.classList.contains('stacked')) return;
+            clearTimeout(_resizeTimer);
+            _resizeTimer = setTimeout(() => {
+                msgList.classList.add('no-transition');
+                applyStack();
+                requestAnimationFrame(() => requestAnimationFrame(() => msgList.classList.remove('no-transition')));
+            }, 120);
+        });
+
+        async function renderList(){
+            try{
+                const res = await fetch('./comment.php');
+                if(!res.ok) throw new Error();
+                const json = await res.json();
+                if(json.code !== 200) return;
+                const data = json.data;
+                msgList.innerHTML = '';
+                
+                const loginUser = localStorage.getItem('siteUser');
+                const currentUserId = loginUser ? parseInt(JSON.parse(loginUser).uid) || 0 : 0;
+                
+                data.forEach(item=>{
+                    const safeName = htmlEscape(item.user);
+                    const safeContent = htmlEscape(item.content);
+                    const safeTime = htmlEscape(item.time);
+                    const avatarSrc = item.avatar || '';
+                    const commentId = item.id || 0;
+                    const commentUserId = parseInt(item.user_id) || 0;
+                    const replies = item.replies || [];
+                    
+                    const showDelete = currentUserId > 0 && commentUserId === currentUserId;
+                    const showReport = currentUserId > 0 && commentUserId !== currentUserId;
+                    const showReply = currentUserId > 0;
+                    let menuItemsHtml = '';
+                    if(showReply){
+                        menuItemsHtml += `<div class="menu-item menu-reply" onclick="toggleReplyForm(${commentId}, '${safeName}'); closeAllMenus();"><img class="mi-icon" src="./icon/回复.svg" alt="回复">${t('msg.reply')}</div>`;
+                    }
+                    menuItemsHtml += `<div class="menu-item menu-share" onclick="shareComment(this); closeAllMenus();"><img class="mi-icon" src="./icon/分享.svg" alt="分享">${t('msg.share')}</div>`;
+                    if(showReport){
+                        menuItemsHtml += `<div class="menu-item menu-report" onclick="openReportModal(${commentId}); closeAllMenus();"><img class="mi-icon" src="./icon/举报.svg" alt="举报">${t('msg.report')}</div>`;
+                    }
+                    if(showDelete){
+                        menuItemsHtml += `<div class="menu-item menu-delete" onclick="deleteComment(${commentId}); closeAllMenus();"><img class="mi-icon" src="./icon/删除.svg" alt="删除">${t('msg.delete')}</div>`;
+                    }
+
+                    let repliesHtml = '';
+                    if(replies.length > 0){
+                        const replyItems = replies.map(r => {
+                            const rSafeName = htmlEscape(r.user);
+                            const rSafeContent = htmlEscape(r.content);
+                            const rSafeTime = htmlEscape(r.time);
+                            const rAvatar = r.avatar || '';
+                            const rUserId = parseInt(r.user_id) || 0;
+                            const rId = r.id || 0;
+                            const showRDelete = currentUserId > 0 && rUserId === currentUserId;
+                            const rDeleteHtml = showRDelete ? `<button class="reply-delete-btn" onclick="deleteComment(${rId})">${t('msg.delete')}</button>` : '';
+                            return `
+                                <div class="reply-item">
+                                    <img class="reply-avatar" src="${rAvatar}" alt="头像" onerror="this.src=''">
+                                    <div class="reply-content-box">
+                                        <div class="reply-header">
+                                            <span class="reply-user">${rSafeName}</span>
+                                            ${rDeleteHtml}
+                                        </div>
+                                        <div class="reply-text">${rSafeContent}</div>
+                                        <div class="reply-time">${rSafeTime}</div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('');
+                        repliesHtml = `
+                            <div class="reply-list" id="replyList_${commentId}">${replyItems}</div>
+                        `;
+                    }
+                    const replyFormHtml = '';
+                    
+                    const div = document.createElement('div');
+                    div.className = 'msg-item';
+                    div.innerHTML = `
+                        <img class="msg-avatar" src="${avatarSrc}" alt="用户头像" onerror="this.src=''">
+                        <div class="msg-content-box">
+                            <div class="msg-header">
+                                <div class="msg-user">${safeName}</div>
+                                <div class="msg-more-wrap">
+                                    <button class="msg-more-btn" onclick="toggleMoreMenu(this)">${t('msg.more')} <span class="arrow">▼</span></button>
+                                    <div class="msg-more-menu">${menuItemsHtml}</div>
+                                </div>
+                            </div>
+                            <div class="msg-text">${safeContent}</div>
+                            <div class="msg-time">${safeTime}</div>
+                            ${repliesHtml}
+                            ${replyFormHtml}
+                        </div>
+                    `;
+                    msgList.appendChild(div);
+                })
+                requestAnimationFrame(applyStack);
+            }catch(err){
+                console.error(err);
+            }
+        }
+
+        // ===== 更多菜单逻辑 =====
+        function toggleMoreMenu(btn){
+            const wrap = btn.parentElement;
+            const menu = wrap.querySelector('.msg-more-menu');
+            const isOpen = menu.classList.contains('show');
+            closeAllMenus();
+            if(!isOpen){
+                menu.classList.add('show');
+                btn.classList.add('open');
+            }
+        }
+        function closeAllMenus(){
+            document.querySelectorAll('.msg-more-menu.show').forEach(m => m.classList.remove('show'));
+            document.querySelectorAll('.msg-more-btn.open').forEach(b => b.classList.remove('open'));
+        }
+        document.addEventListener('click', function(e){
+            if(!e.target.closest('.msg-more-wrap')){
+                closeAllMenus();
+            }
+        });
+       
+        let currentShareText = '';
+        const shareMask = document.getElementById('shareMask');
+        const shareCloseBtn = document.getElementById('shareCloseBtn');
+        const shareToastBox = document.getElementById('shareToastBox');
+        const shareCopyBtn = document.getElementById('shareCopy');
+        const shareWxBtn = document.getElementById('shareWx');
+        const shareQqBtn = document.getElementById('shareQq');
+        const shareTip = document.getElementById('shareTip');
+        const shareCloseTip = document.getElementById('closeShareTip');
+
+        function shareComment(el){
+            const msgItem = el.closest('.msg-item');
+            const msgText = msgItem ? msgItem.querySelector('.msg-text') : null;
+            const msgUser = msgItem ? msgItem.querySelector('.msg-user') : null;
+            const text = msgText ? msgText.textContent : '';
+            const user = msgUser ? msgUser.textContent : '';
+            currentShareText = user + '：' + text + '\n\n来自：本站 留言板';
+        
+            setTimeout(function(){
+                shareMask.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            }, 0);
+        }
+        function closeShareModal(){
+            shareMask.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+        if(shareCloseBtn) shareCloseBtn.addEventListener('click', closeShareModal);
+        if(shareMask){
+            shareMask.addEventListener('click', function(e){
+                if(e.target === shareMask) closeShareModal();
+            });
+        }
+        function copyToClipboard(text){
+            return new Promise(function(resolve){
+                if(navigator.clipboard && window.isSecureContext){
+                    navigator.clipboard.writeText(text).then(function(){ resolve(true); }).catch(function(){ resolve(execCommandCopy(text)); });
+                }else{
+                    resolve(execCommandCopy(text));
+                }
+            });
+        }
+        function execCommandCopy(text){
+            try{
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.top = '-9999px';
+                ta.style.left = '-9999px';
+                ta.setAttribute('readonly', '');
+                document.body.appendChild(ta);
+                ta.select();
+                const ok = document.execCommand('copy');
+                document.body.removeChild(ta);
+                return ok;
+            }catch(e){
+                return false;
+            }
+        }
+        if(shareCopyBtn) shareCopyBtn.addEventListener('click', async function(){
+            const ok = await copyToClipboard(currentShareText);
+            shareToastBox.innerText = ok ? t('share.copySuccess') : t('share.copyFail');
+            shareToastBox.classList.add('active');
+            setTimeout(function(){ shareToastBox.classList.remove('active'); }, 2000);
+            closeShareModal();
+        });
+        if(shareWxBtn) shareWxBtn.addEventListener('click', function(){
+            const ua = navigator.userAgent.toLowerCase();
+            if(ua.match(/MicroMessenger/i) === 'micromessenger'){
+                shareTip.classList.add('active');
+            }else{
+                window.location.href = 'weixin://send?text=' + encodeURIComponent(currentShareText);
+            }
+            closeShareModal();
+        });
+        if(shareQqBtn) shareQqBtn.addEventListener('click', function(){
+            const qqShareUrl = 'https://connect.qq.com/widget/shareqq/index.html?url='
+                + encodeURIComponent(window.location.href)
+                + '&title=' + encodeURIComponent(t('share.title'))
+                + '&desc=' + encodeURIComponent(currentShareText);
+            window.open(qqShareUrl, '_blank', 'width=620,height=540,top=80,left=auto');
+            closeShareModal();
+        });
+        if(shareCloseTip) shareCloseTip.addEventListener('click', function(e){ e.stopPropagation(); shareTip.classList.remove('active'); });
+        document.addEventListener('click', function(e){
+            if(!shareTip.contains(e.target) && !shareWxBtn.contains(e.target) && shareTip.classList.contains('active')){
+                shareTip.classList.remove('active');
+            }
+        });
+
+        // ===== 回复弹窗逻辑 =====
+        let currentReplyParentId = 0;
+        let currentReplyParentName = '';
+        const replyModal = document.getElementById('replyModal');
+        const replyModalTitle = document.getElementById('replyModalTitle');
+        const replyModalQq = document.getElementById('replyModalQq');
+        const replyModalAvatar = document.getElementById('replyModalAvatar');
+        const replyModalText = document.getElementById('replyModalText');
+        const replyModalSend = document.getElementById('replyModalSend');
+        const emojiPicker = document.getElementById('emojiPicker');
+
+        const emojiList = ['😊','😂','🥰','😍','🤣','😴','😭','😅','😎','🤔','🙃','😘','🥺','😡','🤯','😱','🥳','🤩','😴','🤗','🤭','🤐','😬','🤫','😈','🤡','👻','💀','🎉','🎁','💯','🔥','✨','💪','👍','👎','👏','🙌','🤝','✌️','🤞','🤟','🤙','👀','❤️','💔','💕','🌹','🌸','⭐','🌙','☁️','☕','🍪','🍰','🎶','📚','💻','🐱','🐶','🐰','🦊','🌸','🍀'];
+        function initEmojiPicker(){
+            emojiPicker.innerHTML = emojiList.map(e => `<span class="emoji-item" onclick="insertEmoji('${e}')">${e}</span>`).join('');
+        }
+        initEmojiPicker();
+        function toggleEmojiPicker(){
+            emojiPicker.classList.toggle('active');
+        }
+        function insertEmoji(emoji){
+            const ta = replyModalText;
+            const start = ta.selectionStart;
+            const end = ta.selectionEnd;
+            ta.value = ta.value.substring(0, start) + emoji + ta.value.substring(end);
+            ta.focus();
+            ta.setSelectionRange(start + emoji.length, start + emoji.length);
+        }
+
+        function toggleReplyForm(commentId, parentName){
+            const loginUser = localStorage.getItem('siteUser');
+            if(!loginUser){
+                alert(t('reply.loginRequired'));
+                window.location.href = "Login.html";
+                return;
+            }
+            currentReplyParentId = commentId;
+            currentReplyParentName = parentName || '';
+            replyModalTitle.textContent = t('reply.title', {name: currentReplyParentName});
+            replyModalText.value = '';
+            replyModalQq.value = '';
+            replyModalAvatar.src = '';
+            replyModalAvatar.classList.add('empty');
+            emojiPicker.classList.remove('active');
+            replyModal.classList.add('active');
+            setTimeout(()=>replyModalText.focus(), 300);
+        }
+        function closeReplyModal(){
+            replyModal.classList.remove('active');
+        }
+        replyModal.addEventListener('click', function(e){
+            if(e.target === replyModal) closeReplyModal();
+        });
+
+        function loadReplyModalAvatar(qq){
+            qq = qq.trim();
+            if(/^\d+$/.test(qq)){
+                replyModalAvatar.src = `https://q1.qlogo.cn/g?b=qq&nk=${qq}&s=640`;
+                replyModalAvatar.classList.remove('empty');
+            }else{
+                replyModalAvatar.src = '';
+                replyModalAvatar.classList.add('empty');
+            }
+        }
+
+        async function submitReplyModal(){
+            const loginUser = localStorage.getItem('siteUser');
+            if(!loginUser){
+                alert(t('reply.loginRequired'));
+                window.location.href = "Login.html";
+                return;
+            }
+            const content = replyModalText.value.trim();
+            if(!content){alert(t('reply.contentRequired'));return;}
+            if(content.length < 3){alert(t('reply.contentTooShort'));return;}
+            if(content.length > 500){alert(t('reply.contentTooLong'));return;}
+            replyModalSend.disabled = true;
+            replyModalSend.innerText = t('reply.sending');
+            try{
+                const userInfo = JSON.parse(loginUser);
+                let replyAvatar = '';
+                const qqVal = replyModalQq.value.trim();
+                if(/^\d+$/.test(qqVal)){
+                    replyAvatar = `https://q1.qlogo.cn/g?b=qq&nk=${qqVal}&s=640`;
+                }else if(currentAvatar){
+                    replyAvatar = currentAvatar;
+                }
+                const postData = {
+                    user: userInfo.username || '匿名用户',
+                    content: content,
+                    avatar: replyAvatar,
+                    user_id: parseInt(userInfo.uid) || 0,
+                    parent_id: currentReplyParentId
+                };
+                const res = await fetch('./comment.php',{
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(postData),
+                    credentials: 'include'
+                });
+                if(!res.ok) throw new Error();
+                const ret = await res.json();
+                if(ret.code === 200){
+                    closeReplyModal();
+                    renderList();
+                }else{
+                    alert(ret.msg);
+                }
+            }catch(err){
+                console.error(err);
+                alert(t('reply.fail'));
+            }finally{
+                replyModalSend.disabled = false;
+                replyModalSend.innerText = t('reply.send');
+            }
+        }
+        document.addEventListener('keydown', function(e){
+            if(e.key === 'Escape' && replyModal.classList.contains('active')){
+                closeReplyModal();
+            }
+        });
+        
+        async function deleteComment(id) {
+            if(!confirm(t('msg.deleteConfirm'))) return;
+            
+            try{
+                const loginUser = localStorage.getItem('siteUser');
+                const userId = loginUser ? JSON.parse(loginUser).uid || 0 : 0;
+                
+                const res = await fetch('./comment.php', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({id: id, user_id: userId}),
+                    credentials: 'include'
+                });
+                
+                const ret = await res.json();
+                if(ret.code === 200){
+                    renderList();
+                    alert(t('msg.deleteSuccess'));
+                }else{
+                    alert(ret.msg);
+                }
+            }catch(err){
+                console.error(err);
+                alert(t('msg.deleteFail'));
+            }
+        }
+
+        qqInput.addEventListener('input',function(){
+            const qq = this.value.trim();
+            if(/^\d+$/.test(qq)){
+                currentAvatar = `https://q1.qlogo.cn/g?b=qq&nk=${qq}&s=640`;
+                previewAvatar.src = currentAvatar;
+                previewAvatar.style.display = 'block';
+            }else{
+                previewAvatar.style.display = 'none';
+                currentAvatar = '';
+            }
+        })
+
+        async function submitMessage() {
+            const loginUser = localStorage.getItem('siteUser');
+            if(!loginUser){
+                alert(t('msg.loginRequired'));
+                window.location.href = "Login.html";
+                return;
+            }
+            if(isSubmitting) return;
+            const user = nameInput.value.trim();
+            const content = msgInput.value.trim();
+            if(!user){alert(t('msg.nameRequired'));return;}
+            if(!content){alert(t('msg.contentRequired'));return;}
+            const len = content.length;
+            if(len < 3){alert(t('msg.contentTooShort'));return;}
+            if(len > 500){alert(t('msg.contentTooLong'));return;}
+            isSubmitting = true;
+            submitBtn.disabled = true;
+            submitBtn.innerText = t('msg.submitting');
+            try{
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = padZero(now.getMonth() + 1);
+                const day = padZero(now.getDate());
+                const h = padZero(now.getHours());
+                const m = padZero(now.getMinutes());
+                const s = padZero(now.getSeconds());
+                const time = `${year}-${month}-${day} ${h}:${m}:${s}`;
+                const loginUser = localStorage.getItem('siteUser');
+                const userId = loginUser ? parseInt(JSON.parse(loginUser).uid) || 0 : 0;
+                
+                const postData = {
+                    user: user,
+                    content: content,
+                    avatar: currentAvatar,
+                    time: time,
+                    user_id: userId
+                };
+                const res = await fetch('./comment.php',{
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(postData),
+                    credentials: 'include'
+                });
+                if(!res.ok) throw new Error();
+                const ret = await res.json();
+                if(ret.code === 200){
+                    nameInput.value = '';
+                    msgInput.value = '';
+                    qqInput.value = '';
+                    previewAvatar.style.display = 'none';
+                    currentAvatar = '';
+                    renderList();
+                    msgList.scrollIntoView({behavior:'smooth'});
+                    alert(t('msg.submitSuccess'));
+                }else{
+                    alert(ret.msg);
+                }
+            }catch(err){
+                console.error(err);
+                alert(t('msg.submitFail'));
+            }finally{
+                isSubmitting = false;
+                submitBtn.disabled = false;
+                submitBtn.innerText = t('msg.submit');
+            }
+        }
+        submitBtn.addEventListener('click', submitMessage);
+        msgInput.addEventListener('keydown', e => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                submitMessage();
+            }
+        })
+        
+        // 举报相关函数
+        let currentReportId = 0;
+        function openReportModal(commentId) {
+            currentReportId = commentId;
+            document.getElementById('reportModal').style.display = 'flex';
+            document.querySelectorAll('input[name="reportReason"]').forEach(el => el.checked = false);
+        }
+        function closeReportModal() {
+            document.getElementById('reportModal').style.display = 'none';
+            currentReportId = 0;
+        }
+        async function submitReport() {
+            if (currentReportId <= 0) return;
+            
+            const reasonRadio = document.querySelector('input[name="reportReason"]:checked');
+            if (!reasonRadio) {
+                alert(t('report.reasonRequired'));
+                return;
+            }
+            
+            const reason = reasonRadio.value;
+            const loginUser = localStorage.getItem('siteUser');
+            
+            if (!loginUser) {
+                alert(t('report.loginRequired'));
+                closeReportModal();
+                return;
+            }
+            
+            const userInfo = JSON.parse(loginUser);
+            const userId = parseInt(userInfo.uid) || 0;
+            const reporterName = userInfo.nickname || userInfo.username || '匿名用户';
+            
+            try {
+                const res = await fetch('./comment.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'report',
+                        comment_id: currentReportId,
+                        user_id: userId,
+                        reporter_name: reporterName,
+                        reason: reason
+                    }),
+                    credentials: 'include'
+                });
+                
+                const ret = await res.json();
+                if (ret.code === 200) {
+                    alert(ret.msg);
+                    closeReportModal();
+                } else {
+                    alert(ret.msg);
+                }
+            } catch (err) {
+                console.error(err);
+                alert(t('report.fail'));
+            }
+        }
+        document.getElementById('reportModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeReportModal();
+            }
+        });
+        
+        renderList();
+        // 初始化国际化
+        initI18n();
+    </script>
+    <script src="js/yinghua.js"></script>
+    <script src="music_player.js"></script>
+    <script>
+    /* ===== 公告弹窗 ===== */
+    (function(){
+        var ANNOUNCE = {
+            version: '2026-08-12-v2',
+            date: '2026-08-12'
+        };
+        var STORAGE_KEY = 'announce_read_version';
+        var mask = document.getElementById('announceMask');
+        var body = document.getElementById('announceBody');
+        var dateEl = document.getElementById('announceDate');
+        var btn = document.getElementById('announceBtn');
+        if (!mask || !body || !btn) return;
+
+        // 填充内容（使用当前语言）
+        function fillAnnounce() {
+            const content = t('announce.content').replace(/\n/g, '<br>');
+            const qqHtml = `
+                <div class="announce-qq">
+                    <img class="announce-qq-img" src="img/qq-group-qr.png" alt="QQ群二维码">
+                    <div class="announce-qq-num" id="announceQqNum" title="点击复制群号（*＾ワ＾*）"><i class="fab fa-qq"></i> ${t('announce.qqNum')}</div>
+                    <div class="announce-qq-tip">${t('announce.qqTip')}</div>
+                </div>
+            `;
+            body.innerHTML = content + qqHtml;
+            if (ANNOUNCE.date) dateEl.textContent = t('announce.datePrefix') + ANNOUNCE.date;
+            bindAnnounceQqCopy();
+        }
+
+        var readVersion = '';
+        try { readVersion = localStorage.getItem(STORAGE_KEY) || ''; } catch(e) {}
+        if (readVersion !== ANNOUNCE.version) {
+            setTimeout(function(){ 
+                fillAnnounce();
+                mask.classList.add('show'); 
+            }, 800);
+        }
+        function close(){
+            mask.classList.remove('show');
+            try { localStorage.setItem(STORAGE_KEY, ANNOUNCE.version); } catch(e) {}
+        }
+        btn.addEventListener('click', close);
+        mask.addEventListener('click', function(e){
+            if (e.target === mask) close();
+        });
+        document.addEventListener('keydown', function(e){
+            if (e.key === 'Escape' && mask.classList.contains('show')) close();
+        });
+    })();
+    </script>
+    <script>
+    /* ===== 强制绑定邮箱弹窗 ===== */
+    (function(){
+        var mask = document.getElementById('emailBindMask');
+        if (!mask) return;
+        var emailInput = document.getElementById('forceBindEmail');
+        var codeInput = document.getElementById('forceBindCode');
+        var sendBtn = document.getElementById('forceSendCode');
+        var submitBtn = document.getElementById('forceBindSubmit');
+        var tip = document.getElementById('forceBindTip');
+
+        function setTip(msg, type) {
+            tip.textContent = msg || '';
+            tip.className = 'email-bind-tip' + (type ? ' ' + type : '');
+        }
+
+        function ajaxPost(url, data, cb) {
+            var fd = new FormData();
+            for (var k in data) fd.append(k, data[k]);
+            fetch(url, { method: 'POST', body: fd, credentials: 'include' })
+                .then(function(r){ return r.json(); })
+                .then(cb)
+                .catch(function(){ cb({code:500, msg:'网络异常，请稍后重试'}); });
+        }
+
+        // 页面加载后检查是否需要绑定邮箱
+        function checkEmailBind() {
+            var loginUser = localStorage.getItem('siteUser');
+            if (!loginUser) return; // 未登录不检查
+            fetch('check_email_bind.php', { credentials: 'include' })
+                .then(function(r){ return r.json(); })
+                .then(function(res){
+                    if (res.code === 200 && res.need_bind) {
+                        mask.classList.add('show');
+                    }
+                })
+                .catch(function(){});
+        }
+        setTimeout(checkEmailBind, 1200);
+
+        // 获取验证码
+        var codeTimer = null;
+        sendBtn.addEventListener('click', function(){
+            var email = emailInput.value.trim();
+            if (!email || !/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+                setTip('请输入合法的邮箱地址', 'err');
+                return;
+            }
+            sendBtn.disabled = true;
+            var sec = 60;
+            sendBtn.textContent = sec + 's后重发';
+            setTip('正在发送验证码...', '');
+            ajaxPost('send_email_code.php', { email: email }, function(res){
+                if (res.code !== 200) {
+                    setTip(res.msg || '发送失败', 'err');
+                    sendBtn.disabled = false;
+                    sendBtn.textContent = '获取验证码';
+                    return;
+                }
+                setTip('验证码已发送至邮箱', 'ok');
+                codeTimer = setInterval(function(){
+                    sec--;
+                    sendBtn.textContent = sec + 's后重发';
+                    if (sec <= 0) {
+                        clearInterval(codeTimer);
+                        sendBtn.disabled = false;
+                        sendBtn.textContent = '获取验证码';
+                    }
+                }, 1000);
+            });
+        });
+
+        // 确认绑定
+        submitBtn.addEventListener('click', function(){
+            var email = emailInput.value.trim();
+            var code = codeInput.value.trim();
+            if (!email) { setTip('请输入邮箱地址', 'err'); return; }
+            if (!code || !/^\d{6}$/.test(code)) { setTip('请输入6位数字验证码', 'err'); return; }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = '绑定中...';
+            setTip('', '');
+            ajaxPost('bind_email.php', { email: email, code: code }, function(res){
+                submitBtn.disabled = false;
+                submitBtn.textContent = '确 认 绑 定';
+                if (res.code === 200) {
+                    setTip('邮箱绑定成功！', 'ok');
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = '绑 定 成 功';
+                    setTimeout(function(){
+                        mask.classList.remove('show');
+                    }, 1500);
+                } else if (res.code === 401) {
+                    setTip('登录失效，请重新登录', 'err');
+                    localStorage.removeItem('siteUser');
+                    setTimeout(function(){ location.replace('Login.html'); }, 1500);
+                } else {
+                    setTip(res.msg || '绑定失败', 'err');
+                }
+            });
+        });
+
+        // 阻止 ESC 关闭和点击遮罩关闭（强制绑定，不可跳过）
+        document.addEventListener('keydown', function(e){
+            if (e.key === 'Escape' && mask.classList.contains('show')) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        });
+    })();
+    </script>
+</html>

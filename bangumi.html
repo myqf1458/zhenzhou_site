@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的追番 - 真昼小站</title>
+    <link rel="icon" href="img/favicon.png" type="image/jpeg">
+    <link rel="shortcut icon" href="img/favicon.png" type="image/jpeg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
+    <style>
+        :root{
+            --main-color: #5080ee;
+            --pink: #d05a8a;
+            --blue: #4a6a9a;
+            --gold: #f5a623;
+        }
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 64px;
+        }
+        body {
+            margin: 0;
+            padding-top: 64px;
+            font-family: "Noto Serif SC", "PingFang SC", system-ui, -apple-system, "Microsoft YaHei", sans-serif;
+            background: #f7f9fc;
+        }
+        /* 导航栏 */
+        .navbar{
+            background: rgba(255,255,255,0.72);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            padding:0 16px;
+            height:64px;
+            position:fixed;
+            top:0;
+            left:0;
+            right:0;
+            width:100%;
+            z-index:999;
+            box-sizing: border-box;
+        }
+        .navbar-left-wrap{
+            display:flex;
+            align-items:center;
+            gap:10px;
+        }
+        .logo img{
+            width:40px;
+            height:40px;
+            border-radius:50%;
+            object-fit:cover;
+        }
+        .site-name{
+            font-size:18px;
+            font-weight:bold;
+            color:#333;
+        }
+        .hamburger{
+            cursor:pointer;
+            display:none;
+            align-items:center;
+            justify-content:center;
+            padding:6px 10px;
+            border-radius:8px;
+            transition: background 0.2s, all 0.25s ease;
+        }
+        .hamburger:hover{
+            background: rgba(80,128,238,0.12);
+        }
+        .hamburger:active{
+            transform: scale(0.95);
+        }
+        .hamburger img{
+            display:block;
+            width:24px;
+            height:24px;
+        }
+        .menu{
+            display:flex;
+            align-items:center;
+            gap:28px;
+            position:relative;
+        }
+        .menu a{
+            display:inline-flex;
+            align-items:center;
+            gap:6px;
+            text-decoration:none;
+            color:#333;
+            padding:8px 14px;
+            border-radius:10px;
+            transition: all 0.25s ease;
+            white-space:nowrap;
+        }
+        .menu a:hover{
+            background-color: rgba(80, 128, 238, 0.12);
+            color: var(--main-color);
+            transform: translateY(-2px);
+        }
+        .menu a.active{
+            background-color: rgba(80, 128, 238, 0.15);
+            color: var(--main-color);
+            font-weight: 600;
+        }
+        /* Hero 区域 */
+        .bangumi-hero {
+            position: relative;
+            min-height: calc(60vh);
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .bangumi-bg {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, #a8d8ff 0%, #c8e6ff 30%, #ffd8e8 70%, #ffb8d0 100%);
+            z-index: 0;
+        }
+        .bangumi-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                radial-gradient(circle at 15% 25%, rgba(168,216,255,0.5) 0%, transparent 45%),
+                radial-gradient(circle at 85% 75%, rgba(255,184,208,0.5) 0%, transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(255,255,255,0.3) 0%, transparent 60%);
+        }
+        .bangumi-bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.25'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.4;
+        }
+        .bangumi-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 40px 20px;
+            max-width: 600px;
+            animation: heroFadeIn 1s ease-out forwards;
+        }
+        @keyframes heroFadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .bangumi-avatar {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 24px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid rgba(255,255,255,0.8);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+        }
+        .bangumi-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .bangumi-title {
+            font-size: 42px;
+            font-weight: 700;
+            color: #d05a8a;
+            margin: 0 0 16px;
+            text-shadow: 0 2px 8px rgba(255,255,255,0.6);
+            letter-spacing: 2px;
+        }
+        .bangumi-desc {
+            font-size: 18px;
+            color: #4a6a9a;
+            margin: 0;
+            line-height: 1.8;
+            text-shadow: 0 1px 4px rgba(255,255,255,0.5);
+        }
+        /* 追番列表区 */
+        .bangumi-wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 50px 20px 30px;
+        }
+        .bangumi-stats {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .bangumi-stats .stats-text {
+            display: inline-block;
+            padding: 10px 28px;
+            background: rgba(255,255,255,0.85);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            border-radius: 50px;
+            color: #4a6a9a;
+            font-size: 16px;
+            font-weight: 600;
+            box-shadow: 0 4px 16px rgba(80,128,238,0.12);
+            border: 1px solid rgba(255,255,255,0.6);
+        }
+        .bangumi-stats .stats-num {
+            color: var(--pink);
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0 4px;
+        }
+        .bangumi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 24px;
+        }
+        .bangumi-card {
+            background: rgba(255,255,255,0.85);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            overflow: hidden;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(255,255,255,0.6);
+            box-shadow: 0 4px 16px rgba(180,140,220,0.1);
+            transition: transform 0.35s ease, box-shadow 0.35s ease;
+        }
+        .bangumi-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 36px rgba(180,140,220,0.28);
+        }
+        .card-cover {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 3 / 4;
+            overflow: hidden;
+            background: linear-gradient(135deg, #e8eef8, #f8e8f0);
+        }
+        .card-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+        .bangumi-card:hover .card-cover img {
+            transform: scale(1.06);
+        }
+        .card-cover .cover-fallback {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #b0a8c0;
+            font-size: 14px;
+            background: linear-gradient(135deg, #e8eef8, #f8e8f0);
+        }
+        .card-body {
+            padding: 14px 14px 16px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+        .card-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+            line-height: 1.5;
+            margin: 0 0 10px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-height: 45px;
+        }
+        .card-score {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+        .star-icon {
+            width: 16px;
+            height: 16px;
+            color: var(--gold);
+            flex-shrink: 0;
+        }
+        .score-num {
+            color: var(--gold);
+            font-weight: 700;
+            font-size: 14px;
+        }
+        .score-text {
+            color: #999;
+            font-size: 12px;
+        }
+        .card-progress {
+            margin-bottom: 8px;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(208, 90, 138, 0.12);
+            border-radius: 99px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #a8d8ff, #ffb8d0);
+            border-radius: 99px;
+            transition: width 1s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 6px;
+            font-size: 12px;
+            color: #777;
+        }
+        .progress-count {
+            color: var(--blue);
+            font-weight: 600;
+        }
+        .progress-percent {
+            color: #999;
+        }
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: auto;
+            padding-top: 8px;
+        }
+        .card-tag {
+            display: inline-block;
+            padding: 3px 10px;
+            font-size: 11px;
+            color: #4a6a9a;
+            background: rgba(168,216,255,0.25);
+            border-radius: 99px;
+            white-space: nowrap;
+        }
+        .card-tag.tag-area {
+            color: var(--pink);
+            background: rgba(255,184,208,0.25);
+        }
+        /* 状态提示 */
+        .status-box {
+            text-align: center;
+            padding: 60px 20px;
+            color: #4a6a9a;
+            font-size: 16px;
+        }
+        .status-box .status-icon {
+            margin-bottom: 16px;
+        }
+        .status-box .status-icon svg {
+            width: 56px;
+            height: 56px;
+            color: #b8c8e0;
+        }
+        .loading-dots {
+            display: inline-flex;
+            gap: 6px;
+            margin-top: 12px;
+        }
+        .loading-dots span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--pink);
+            animation: dotBounce 1.2s infinite ease-in-out;
+        }
+        .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes dotBounce {
+            0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+        .error-box .status-icon svg { color: #ff8a8a; }
+        .retry-btn {
+            margin-top: 16px;
+            padding: 10px 28px;
+            background: var(--main-color);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            font-size: 14px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.25s ease;
+        }
+        .retry-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(80,128,238,0.3);
+        }
+        /* 页脚 */
+        footer{
+            margin-top: 60px;
+            padding: 30px 16px;
+            background: rgba(255,255,255,0.72);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.72);
+        }
+        .footer-text{
+            color:#555;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+        .footer-text a{
+            color: var(--main-color);
+            text-decoration: none;
+        }
+        .footer-text a:hover{
+            text-decoration: underline;
+        }
+        /* 响应式 */
+        @media (max-width:768px){
+            body {
+                padding-top: 64px;
+            }
+            .hamburger{
+                display:flex;
+            }
+            .menu{
+                position:fixed;
+                top:64px;
+                left:0;
+                right:0;
+                background:rgba(255,255,255,0.96);
+                -webkit-backdrop-filter:blur(10px);
+                backdrop-filter:blur(10px);
+                flex-direction:column;
+                padding:20px 0;
+                gap:16px;
+                display:none;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                max-height: calc(100vh - 64px);
+                overflow-y: auto;
+            }
+            .menu.show{
+                display:flex;
+            }
+            .menu a{
+                justify-content:center;
+                width:100%;
+            }
+            .bangumi-grid{
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 16px;
+            }
+            .bangumi-title{
+                font-size: 32px;
+                letter-spacing: 1px;
+            }
+            .bangumi-desc{
+                font-size: 16px;
+            }
+            .bangumi-avatar{
+                width: 80px;
+                height: 80px;
+            }
+            .bangumi-wrap{
+                padding: 30px 16px 20px;
+            }
+            .card-title{
+                font-size: 14px;
+                min-height: 42px;
+            }
+        }
+        @media (max-width:480px){
+            .bangumi-grid{
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 12px;
+            }
+            .bangumi-title{
+                font-size: 26px;
+            }
+            .bangumi-desc{
+                font-size: 14px;
+            }
+            .card-body{
+                padding: 10px 10px 12px;
+            }
+            .card-title{
+                font-size: 13px;
+                min-height: 38px;
+            }
+            .bangumi-stats .stats-text{
+                font-size: 14px;
+                padding: 8px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-left-wrap">
+            <div class="logo"><img src="img/5.jpg" alt="真昼头像"></div>
+            <div class="site-name">真昼小站</div>
+        </div>
+        <div class="hamburger" id="menuBtn"><img src="./icon/菜单栏.svg" width="24" height="24" alt="菜单"></div>
+        <div class="menu" id="navMenu">
+            <a href="index2.html"><img src="./icon/首页.svg" width="24" height="24" alt="首页"><span>首页</span></a>
+            <a href="community.html"><img src="./icon/社区.svg" width="24" height="24" alt="社区"><span>社区</span></a>
+            <a href="bangumi.html" class="active"><img src="./icon/首页.svg" width="24" height="24" alt="追番"><span>我的追番</span></a>
+            <a href="Login.html"><img src="./icon/登入.svg" width="24" height="24" alt="登入"><span>登入</span></a>
+            <a href="index2.html#messageBlock"><img src="./icon/留言板.svg" width="24" height="24" alt="留言板"><span>留言板</span></a>
+            <a href="zanshang.html"><img src="./icon/赞赏.svg" width="24" height="24" alt="赞赏"><span>赞赏</span></a>
+        </div>
+    </div>
+
+    <div class="bangumi-hero">
+        <div class="bangumi-bg"></div>
+        <div class="bangumi-content">
+            <div class="bangumi-avatar">
+                <img src="img/5.jpg" alt="真昼头像">
+            </div>
+            <h1 class="bangumi-title">我的追番</h1>
+            <p class="bangumi-desc">记录每一部追过的温柔时光</p>
+        </div>
+    </div>
+
+    <div class="bangumi-wrap">
+        <div class="bangumi-stats" id="bangumiStats" style="display:none;">
+            <span class="stats-text">共<span class="stats-num" id="statsNum">0</span>部追番</span>
+        </div>
+        <div id="statusBox" class="status-box">
+            <div class="status-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>
+            </div>
+            <div>正在加载追番列表</div>
+            <div class="loading-dots"><span></span><span></span><span></span></div>
+        </div>
+        <div class="bangumi-grid" id="bangumiGrid" style="display:none;"></div>
+    </div>
+
+    <footer>
+        <div class="footer-text">
+            <p class="copyright">真昼小站 © 2026 建湖梦玖信息技术工作室（个体工商户） All Rights Reserved</p>
+            <p class="footer-link-group">
+                本站仅作动漫分享交流 <span>|</span>
+                <a href="#" target="_blank" rel="noopener noreferrer">作者B站</a> <span>|</span>
+                <!-- 如已为站点完成 ICP 备案，请在此处替换为你的备案号 -->
+                <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">ICP备案号</a> <span>|</span>
+                <a href="https://icp.gov.moe/" target="_blank" rel="noopener noreferrer">萌ICP备号</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        (function(){
+            var menuBtn = document.getElementById('menuBtn');
+            var navMenu = document.getElementById('navMenu');
+            menuBtn.addEventListener('click', function(){
+                navMenu.classList.toggle('show');
+            });
+
+            var statusBox = document.getElementById('statusBox');
+            var grid = document.getElementById('bangumiGrid');
+            var statsBox = document.getElementById('bangumiStats');
+            var statsNum = document.getElementById('statsNum');
+
+            function escapeHtml(str){
+                if(str === null || str === undefined) return '';
+                return String(str)
+                    .replace(/&/g,'&amp;')
+                    .replace(/</g,'&lt;')
+                    .replace(/>/g,'&gt;')
+                    .replace(/"/g,'&quot;')
+                    .replace(/'/g,'&#039;');
+            }
+
+            function showLoading(){
+                statusBox.style.display = 'block';
+                statusBox.className = 'status-box';
+                statusBox.innerHTML =
+                    '<div class="status-icon">' +
+                        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"></path></svg>' +
+                    '</div>' +
+                    '<div>正在加载追番列表</div>' +
+                    '<div class="loading-dots"><span></span><span></span><span></span></div>';
+                grid.style.display = 'none';
+                statsBox.style.display = 'none';
+            }
+
+            function showEmpty(){
+                statusBox.style.display = 'block';
+                statusBox.className = 'status-box';
+                statusBox.innerHTML =
+                    '<div class="status-icon">' +
+                        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>' +
+                    '</div>' +
+                    '<div>还没有添加追番，敬请期待</div>';
+                grid.style.display = 'none';
+                statsBox.style.display = 'none';
+            }
+
+            function showError(msg){
+                statusBox.style.display = 'block';
+                statusBox.className = 'status-box error-box';
+                statusBox.innerHTML =
+                    '<div class="status-icon">' +
+                        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>' +
+                    '</div>' +
+                    '<div>' + escapeHtml(msg || '加载失败，请稍后重试') + '</div>' +
+                    '<button class="retry-btn" id="retryBtn">重新加载</button>';
+                grid.style.display = 'none';
+                statsBox.style.display = 'none';
+                var retryBtn = document.getElementById('retryBtn');
+                if(retryBtn){
+                    retryBtn.addEventListener('click', loadList);
+                }
+            }
+
+            function buildStars(score){
+                var filled = 0;
+                if(score >= 9) filled = 5;
+                else if(score >= 7) filled = 4;
+                else if(score >= 5) filled = 3;
+                else if(score >= 3) filled = 2;
+                else if(score > 0) filled = 1;
+                var html = '';
+                for(var i = 0; i < 5; i++){
+                    if(i < filled){
+                        html += '<svg class="star-icon" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>';
+                    }else{
+                        html += '<svg class="star-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>';
+                    }
+                }
+                return html;
+            }
+
+            function renderList(list, total){
+                if(!list || list.length === 0){
+                    showEmpty();
+                    return;
+                }
+                statusBox.style.display = 'none';
+                grid.style.display = 'grid';
+                statsBox.style.display = 'block';
+                statsNum.textContent = (total !== undefined && total !== null) ? total : list.length;
+
+                var html = '';
+                for(var i = 0; i < list.length; i++){
+                    var item = list[i];
+                    var title = escapeHtml(item.title || '未知番剧');
+                    var cover = escapeHtml(item.cover || '');
+                    var score = parseFloat(item.score) || 0;
+                    var totalCount = parseInt(item.total_count) || 0;
+                    var followCount = parseInt(item.follow_count) || 0;
+                    var progress = parseInt(item.progress) || 0;
+                    if(totalCount > 0){
+                        progress = Math.min(100, Math.max(0, Math.round(followCount / totalCount * 100)));
+                    }
+                    var area = escapeHtml(item.area || '');
+                    var typeName = escapeHtml(item.season_type_name || '');
+                    var url = escapeHtml(item.url || '');
+                    var scoreDisplay = score > 0 ? score.toFixed(1) : '暂无';
+
+                    var tagHtml = '';
+                    if(typeName){
+                        tagHtml += '<span class="card-tag">' + typeName + '</span>';
+                    }
+                    if(area){
+                        tagHtml += '<span class="card-tag tag-area">' + area + '</span>';
+                    }
+
+                    var countText = totalCount > 0 ? (followCount + '/' + totalCount + '话') : (followCount + '话');
+
+                    html +=
+                        '<a class="bangumi-card"' + (url ? ' href="' + url + '" target="_blank" rel="noopener noreferrer"' : '') + '>' +
+                            '<div class="card-cover">' +
+                                (cover ? '<img src="' + cover + '" alt="' + title + '" loading="lazy" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\';">' : '') +
+                                '<div class="cover-fallback"' + (cover ? ' style="display:none;"' : '') + '>暂无封面</div>' +
+                            '</div>' +
+                            '<div class="card-body">' +
+                                '<h3 class="card-title">' + title + '</h3>' +
+                                '<div class="card-score">' +
+                                    buildStars(score) +
+                                    '<span class="score-num">' + scoreDisplay + '</span>' +
+                                '</div>' +
+                                '<div class="card-progress">' +
+                                    '<div class="progress-bar">' +
+                                        '<div class="progress-fill" data-progress="' + progress + '"></div>' +
+                                    '</div>' +
+                                    '<div class="progress-text">' +
+                                        '<span class="progress-count">' + countText + '</span>' +
+                                        '<span class="progress-percent">' + progress + '%</span>' +
+                                    '</div>' +
+                                '</div>' +
+                                (tagHtml ? '<div class="card-tags">' + tagHtml + '</div>' : '') +
+                            '</div>' +
+                        '</a>';
+                }
+                grid.innerHTML = html;
+
+                // 进度条动画
+                var fills = grid.querySelectorAll('.progress-fill');
+                setTimeout(function(){
+                    for(var j = 0; j < fills.length; j++){
+                        fills[j].style.width = fills[j].getAttribute('data-progress') + '%';
+                    }
+                }, 80);
+            }
+
+            function loadList(){
+                showLoading();
+                fetch('bangumi_api.php?action=list', { credentials: 'same-origin' })
+                    .then(function(res){
+                        if(!res.ok){
+                            throw new Error('网络异常 (HTTP ' + res.status + ')');
+                        }
+                        return res.json();
+                    })
+                    .then(function(json){
+                        if(json && json.code === 0 && json.data){
+                            renderList(json.data.list, json.data.total);
+                        }else{
+                            showError(json && json.msg ? json.msg : '数据格式异常');
+                        }
+                    })
+                    .catch(function(err){
+                        showError(err && err.message ? err.message : '网络请求失败，请检查连接');
+                    });
+            }
+
+            loadList();
+        })();
+    </script>
+</body>
+</html>

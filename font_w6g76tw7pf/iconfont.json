@@ -1,0 +1,37 @@
+{
+  "id": "",
+  "name": "",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "310286",
+      "name": "weixin_mw",
+      "font_class": "weixinmw",
+      "unicode": "e617",
+      "unicode_decimal": 58903
+    },
+    {
+      "icon_id": "8289051",
+      "name": "QQ",
+      "font_class": "QQ",
+      "unicode": "e876",
+      "unicode_decimal": 59510
+    },
+    {
+      "icon_id": "25749473",
+      "name": "快手",
+      "font_class": "kuaishou",
+      "unicode": "e697",
+      "unicode_decimal": 59031
+    },
+    {
+      "icon_id": "34064566",
+      "name": "抖音",
+      "font_class": "douyin",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    }
+  ]
+}

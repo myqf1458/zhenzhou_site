@@ -1,0 +1,13 @@
+CREATE DATABASE IF NOT EXISTS user_auth DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE user_auth;
+
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE `user` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '用户ID',
+  `username` VARCHAR(50) NOT NULL COMMENT '用户名',
+  `email` VARCHAR(100) NOT NULL COMMENT '登录邮箱',
+  `password` VARCHAR(100) NOT NULL COMMENT '加密密码',
+  `create_time` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '注册时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户表';

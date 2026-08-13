@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>登录注册页</title>
+    <link rel="icon" href="img/favicon.png" type="image/jpeg">
+    <link rel="shortcut icon" href="img/favicon.png" type="image/jpeg">
+    <link rel="stylesheet" href="./font_52wyywozu7t/iconfont.css">
+    <style>
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body{
+    background: linear-gradient(135deg, #e0ecff 0%, #e8f1ff 30%, #d6e8ff 65%, #cfe3ff 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    min-height: 100dvh; /* 动态视口高度，适配移动端浏览器UI */
+    font-family: system-ui, "Microsoft YaHei", sans-serif;
+    padding: 20px;
+    padding-top: max(20px, env(safe-area-inset-top));
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: auto; /* 允许纵向滚动 */
+    -webkit-overflow-scrolling: touch;
+}
+/* 背景装饰圆球 */
+body::before,
+body::after{
+    content: "";
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(40px);
+    z-index: 0;
+    pointer-events: none;
+}
+body::before{
+    width: 320px;
+    height: 320px;
+    background: rgba(80, 128, 238, 0.3);
+    top: -80px;
+    right: -80px;
+}
+body::after{
+    width: 380px;
+    height: 380px;
+    background: rgba(120, 170, 255, 0.25);
+    bottom: -120px;
+    left: -120px;
+}
+/* 浮动小圆点装饰 */
+.deco-dot{
+    position: fixed;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    z-index: 0;
+    pointer-events: none;
+    animation: floatUp 8s ease-in-out infinite;
+}
+.deco-dot:nth-child(1){ width: 14px; height: 14px; top: 15%; left: 12%; animation-delay: 0s; }
+.deco-dot:nth-child(2){ width: 10px; height: 10px; top: 70%; left: 8%; animation-delay: 1.5s; }
+.deco-dot:nth-child(3){ width: 18px; height: 18px; top: 25%; right: 15%; animation-delay: 3s; }
+.deco-dot:nth-child(4){ width: 8px; height: 8px; top: 80%; right: 18%; animation-delay: 4.5s; }
+@keyframes floatUp{
+    0%, 100% { transform: translateY(0); opacity: 0.5; }
+    50% { transform: translateY(-30px); opacity: 0.9; }
+}
+
+/* 主卡片 */
+.wrap{
+    width: 420px;
+    max-width: 100%;
+    max-height: calc(100dvh - 40px);
+    border-radius: 28px;
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(22px) saturate(180%);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 20px 60px rgba(150, 100, 200, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    padding: 40px 36px 36px;
+    position: relative;
+    z-index: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+/* 头像 */
+.avatar-wrap{
+    width: 96px;
+    height: 96px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    padding: 4px;
+    background: linear-gradient(135deg, #6ba3ff, #8ec5ff);
+    box-shadow: 0 8px 24px rgba(80, 128, 238, 0.4);
+}
+.avatar-wrap img{
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid rgba(255, 255, 255, 0.9);
+}
+/* 标题 */
+.form-title{
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+    background: linear-gradient(135deg, #3b82f6, #6ba3ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 4px;
+    margin-bottom: 6px;
+}
+.form-subtitle{
+    text-align: center;
+    color: #5a7090;
+    font-size: 13px;
+    margin-bottom: 28px;
+}
+/* Tab 切换 */
+.tab-nav{
+    display: flex;
+    background: rgba(255, 255, 255, 0.35);
+    border-radius: 14px;
+    padding: 4px;
+    margin-bottom: 24px;
+    position: relative;
+}
+.tab-btn{
+    flex: 1;
+    padding: 10px 0;
+    text-align: center;
+    font-size: 14px;
+    color: #5a7090;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: color 0.3s;
+    position: relative;
+    z-index: 2;
+    background: transparent;
+    border: none;
+    font-family: inherit;
+}
+.tab-btn.active{
+    color: #fff;
+    font-weight: 600;
+}
+.tab-slider{
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: calc(50% - 4px);
+    height: calc(100% - 8px);
+    background: linear-gradient(135deg, #3b82f6, #6ba3ff);
+    border-radius: 10px;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(80, 128, 238, 0.35);
+}
+.wrap.tab-right .tab-slider{
+    transform: translateX(100%);
+}
+/* 表单容器 */
+.form-panels{
+    position: relative;
+    overflow: hidden;
+}
+.form-box{
+    display: none;
+    flex-direction: column;
+    animation: fadeIn 0.4s ease;
+}
+.form-box.active{
+    display: flex;
+}
+@keyframes fadeIn{
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+/* 输入框 */
+.input-item{
+    width: 100%;
+    height: 48px;
+    margin-bottom: 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.45);
+    padding: 0 16px;
+    outline: none;
+    color: #3a5070;
+    font-size: 14px;
+    font-family: inherit;
+    transition: all 0.25s;
+}
+.input-item:focus{
+    background: rgba(255, 255, 255, 0.7);
+    border-color: rgba(59, 130, 246, 0.7);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+.input-item::placeholder{
+    color: #98a8c0;
+}
+/* 验证码 */
+.code-input-wrap{
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+}
+.code-input{
+    flex: 1;
+    min-width: 0;
+    height: 48px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.45);
+    padding: 0 16px;
+    outline: none;
+    color: #3a5070;
+    font-size: 14px;
+    font-family: inherit;
+    transition: all 0.25s;
+}
+.code-input:focus{
+    background: rgba(255, 255, 255, 0.7);
+    border-color: rgba(59, 130, 246, 0.7);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+.code-input::placeholder{
+    color: #98a8c0;
+}
+.send-code-btn{
+    width: 120px;
+    height: 48px;
+    border-radius: 14px;
+    border: none;
+    background: linear-gradient(135deg, #3b82f6, #6ba3ff);
+    color: #fff;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.25s;
+    font-family: inherit;
+    box-shadow: 0 4px 12px rgba(80, 128, 238, 0.3);
+}
+.send-code-btn:active{
+    transform: scale(0.97);
+}
+.send-code-btn.disabled{
+    background: rgba(160, 150, 170, 0.4);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+/* 提交按钮 */
+.submit-btn{
+    width: 100%;
+    height: 50px;
+    margin-top: 8px;
+    border-radius: 14px;
+    border: none;
+    background: linear-gradient(135deg, #3b82f6, #6ba3ff);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.25s;
+    font-family: inherit;
+    box-shadow: 0 8px 20px rgba(80, 128, 238, 0.35);
+}
+.submit-btn:active{
+    transform: scale(0.98);
+    box-shadow: 0 4px 12px rgba(80, 128, 238, 0.4);
+}
+/* 链接 */
+.form-link{
+    color: #3b82f6;
+    font-size: 13px;
+    text-align: center;
+    margin-top: 16px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.form-link:hover{
+    color: #6ba3ff;
+}
+/* 第三方登录 */
+.form_icons{
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 22px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(255, 255, 255, 0.5);
+}
+.iconfont{
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 20px;
+    background: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    color: #3b82f6;
+    cursor: pointer;
+    transition: all 0.25s;
+}
+.iconfont:hover{
+    background: linear-gradient(135deg, #3b82f6, #6ba3ff);
+    color: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(80, 128, 238, 0.35);
+}
+/* 返回登录链接（忘记密码页） */
+.back-login{
+    text-align: center;
+    margin-top: 18px;
+    color: #5a7090;
+    font-size: 13px;
+    cursor: pointer;
+}
+.back-login:hover{
+    color: #3b82f6;
+}
+/* 同意条款复选框 */
+.agree-row{
+    display: flex;
+    align-items: center;
+    margin-bottom: 14px;
+    font-size: 13px;
+    color: #5a7090;
+    user-select: none;
+}
+.agree-row input[type="checkbox"]{
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 5px;
+    border: 1.5px solid rgba(59, 130, 246, 0.5);
+    background: rgba(255, 255, 255, 0.5);
+    margin-right: 8px;
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+    transition: all 0.2s;
+}
+.agree-row input[type="checkbox"]:checked{
+    background: linear-gradient(135deg, #3b82f6, #6ba3ff);
+    border-color: #3b82f6;
+}
+.agree-row input[type="checkbox"]:checked::after{
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 1px;
+    width: 5px;
+    height: 10px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+.agree-row a{
+    color: #3b82f6;
+    cursor: pointer;
+    text-decoration: none;
+}
+.agree-row a:hover{
+    text-decoration: underline;
+}
+/* 条款弹窗 */
+.modal-mask{
+    position: fixed;
+    inset: 0;
+    background: rgba(30, 50, 80, 0.45);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 100;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+.modal-mask.show{
+    display: flex;
+}
+.modal-box{
+    width: 560px;
+    max-width: 100%;
+    max-height: 80vh;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(30, 50, 80, 0.25);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: modalIn 0.3s ease;
+}
+@keyframes modalIn{
+    from { opacity: 0; transform: scale(0.94) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.modal-head{
+    padding: 18px 24px;
+    border-bottom: 1px solid rgba(59, 130, 246, 0.15);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.modal-head h3{
+    font-size: 17px;
+    color: #3b82f6;
+    font-weight: 600;
+}
+.modal-close{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(59, 130, 246, 0.12);
+    color: #3b82f6;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.modal-close:hover{
+    background: rgba(59, 130, 246, 0.25);
+    transform: rotate(90deg);
+}
+.modal-body{
+    padding: 20px 24px;
+    overflow-y: auto;
+    color: #3a5070;
+    font-size: 14px;
+    line-height: 1.8;
+}
+.modal-body h4{
+    color: #2c4a7a;
+    margin: 14px 0 6px;
+    font-size: 15px;
+}
+.modal-body h4:first-child{
+    margin-top: 0;
+}
+.modal-body p{
+    margin-bottom: 8px;
+}
+/* 响应式 */
+@media screen and (max-width: 480px){
+    body{ padding: 10px; align-items: flex-start; }
+    .wrap{ 
+        padding: 28px 22px 24px; 
+        border-radius: 22px;
+        max-height: none; /* 小屏幕允许内容撑开 */
+    }
+    .avatar-wrap{ width: 72px; height: 72px; margin-bottom: 14px; }
+    .form-title{ font-size: 20px; letter-spacing: 3px; }
+    .form-subtitle{ font-size: 12px; margin-bottom: 20px; }
+    .input-item, .code-input{ height: 44px; margin-bottom: 12px; font-size: 13px; }
+    .code-input-wrap{ gap: 8px; }
+    .code-input-wrap .send-code-btn{ height: 44px; width: 100%; font-size: 12px; margin-top: 8px; }
+    .submit-btn{ height: 46px; font-size: 15px; margin-top: 4px; }
+    .agree-row{ font-size: 12px; margin-bottom: 12px; }
+    .agree-row input[type="checkbox"]{ width: 16px; height: 16px; }
+    .form_icons{ margin-top: 18px; padding-top: 18px; gap: 12px; }
+    .iconfont{ width: 38px; height: 38px; font-size: 18px; }
+    .tab-nav{ margin-bottom: 18px; }
+    .tab-btn{ font-size: 13px; padding: 8px 0; }
+    /* 弹窗响应式 */
+    .modal-box{ 
+        width: 100%; 
+        max-height: 90vh;
+        border-radius: 16px;
+    }
+    .modal-head{ padding: 14px 18px; }
+    .modal-head h3{ font-size: 15px; }
+    .modal-body{ padding: 16px 18px; font-size: 13px; line-height: 1.7; }
+}
+
+/* 更小屏幕 */
+@media screen and (max-width: 360px){
+    body{ padding: 8px; }
+    .wrap{ padding: 24px 18px 20px; border-radius: 20px; }
+    .avatar-wrap{ width: 64px; height: 64px; margin-bottom: 12px; }
+    .form-title{ font-size: 18px; letter-spacing: 2px; }
+    .form-subtitle{ font-size: 11px; margin-bottom: 16px; }
+    .input-item, .code-input{ height: 42px; font-size: 12px; padding: 0 12px; }
+    .send-code-btn{ height: 42px; width: 88px; font-size: 11px; }
+    .submit-btn{ height: 44px; font-size: 14px; letter-spacing: 1px; }
+    .code-input-wrap{ gap: 8px; margin-bottom: 12px; }
+}
+    </style>
+</head>
+<body>
+<span class="deco-dot"></span>
+<span class="deco-dot"></span>
+<span class="deco-dot"></span>
+<span class="deco-dot"></span>
+
+<div class="wrap" id="mainWrap">
+    <div class="avatar-wrap">
+        <img src="./img/5.jpg" alt="头像">
+    </div>
+    <h2 class="form-title" id="pageTitle">欢迎回来</h2>
+    <p class="form-subtitle" id="pageSubtitle">登录账号，继续奇妙旅程</p>
+
+    <!-- Tab 切换（仅登录/注册页显示） -->
+    <div class="tab-nav" id="tabNav">
+        <div class="tab-slider"></div>
+        <button class="tab-btn active" data-tab="login">登 录</button>
+        <button class="tab-btn" data-tab="register">注 册</button>
+    </div>
+
+    <div class="form-panels">
+        <!-- 登录 -->
+        <div class="form-box active" id="loginBox">
+            <input class="input-item" type="email" placeholder="邮箱地址" id="loginEmail">
+            <input class="input-item" type="password" placeholder="登录密码" id="loginPwd">
+            <div class="code-input-wrap">
+                <input class="code-input" placeholder="邮箱验证码" id="loginCode">
+                <button class="send-code-btn" id="sendLoginCode">发送验证码</button>
+            </div>
+            <button class="submit-btn">登 录</button>
+            <a class="form-link" id="forgetBtn">忘记密码？</a>
+            <div class="form_icons">
+                <i class="iconfont icon-QQ" title="QQ登录" id="qqLoginBtn" style="cursor:pointer"></i>
+                <i class="iconfont icon-weixin" title="微信登录" style="opacity:.5;cursor:not-allowed"></i>
+            </div>
+        </div>
+
+        <!-- 注册 -->
+        <div class="form-box" id="registerBox">
+            <input class="input-item" placeholder="昵称" id="regName">
+            <input class="input-item" placeholder="QQ号（自动获取头像）" id="regQq">
+            <input class="input-item" type="email" placeholder="邮箱地址" id="regEmail">
+            <input class="input-item" type="password" placeholder="设置密码" id="regPwd">
+            <div class="code-input-wrap">
+                <input class="code-input" placeholder="邮箱验证码" id="regCode">
+                <button class="send-code-btn" id="sendRegCode">发送验证码</button>
+            </div>
+            <label class="agree-row">
+                <input type="checkbox" id="agreeTerms">
+                <span>我已阅读并同意<a id="openUserAgreement">《用户协议》</a>与<a id="openPrivacy">《隐私条款》</a></span>
+            </label>
+            <button class="submit-btn">注 册</button>
+            <div class="form_icons">
+                <i class="iconfont icon-QQ" title="QQ注册" id="qqRegisterBtn" style="cursor:pointer"></i>
+                <i class="iconfont icon-weixin" title="微信注册" style="opacity:.5;cursor:not-allowed"></i>
+            </div>
+        </div>
+
+        <!-- 忘记密码 -->
+        <div class="form-box" id="forgetBox">
+            <input class="input-item" type="email" placeholder="注册邮箱" id="forgetEmail">
+            <div class="code-input-wrap">
+                <input class="code-input" placeholder="邮箱验证码" id="forgetCode">
+                <button class="send-code-btn" id="sendForgetCode">发送验证码</button>
+            </div>
+            <input class="input-item" type="password" placeholder="设置新密码" id="newPwd">
+            <input class="input-item" type="password" placeholder="确认新密码" id="rePwd">
+            <button class="submit-btn" id="resetPwdBtn">重置密码</button>
+            <div class="back-login" id="backLogin">← 返回登录</div>
+        </div>
+    </div>
+</div>
+
+<!-- 用户协议弹窗 -->
+<div class="modal-mask" id="userAgreementModal">
+    <div class="modal-box">
+        <div class="modal-head">
+            <h3>用户协议</h3>
+            <button class="modal-close" data-close>×</button>
+        </div>
+        <div class="modal-body">
+            <h4>一、服务说明</h4>
+            <p>欢迎您使用真昼小站（以下简称"本站"）。本站为非商业性质的个人兴趣站点，提供的所有服务均不收取任何费用。注册账号即表示您自愿接受本协议全部条款。</p>
+
+            <h4>二、账号注册</h4>
+            <p>1. 您需使用真实有效的邮箱注册账号，用于接收验证码与系统通知。</p>
+            <p>2. 您应妥善保管账号密码，因账号密码泄露造成的损失由您自行承担。</p>
+            <p>3. 注册时填写的 QQ 号仅用于获取头像，不会用于其他用途。</p>
+
+            <h4>三、用户行为规范</h4>
+            <p>您在使用本站服务时，不得从事以下行为：</p>
+            <p>· 发布违反法律法规或公序良俗的内容；</p>
+            <p>· 冒用他人身份或发布侵犯他人权益的信息；</p>
+            <p>· 进行刷接口、暴力破解、爬虫攻击等破坏站点正常运行的行为；</p>
+            <p>· 利用本站传播广告、垃圾信息或恶意代码。</p>
+            <p>违反上述规定的账号，本站有权予以封禁或删除。</p>
+
+            <h4>四、内容版权</h4>
+            <p>本站展示的图片、文章、视频等内容，版权归属原作者或权利人所有，仅供个人学习交流使用，未经授权不得用于商业用途。用户在本站发布的内容，版权归用户所有，但视为已授权本站在站内展示。</p>
+
+            <h4>五、免责声明</h4>
+            <p>本站内容来源于互联网，无法保证所有信息的准确性、完整性和时效性。因使用本站内容产生的任何直接或间接损失，本站不承担法律责任。本站可能包含指向第三方网站的链接，第三方网站的内容与隐私政策不受本站控制。</p>
+
+            <h4>六、协议变更</h4>
+            <p>本站有权根据实际运营情况修改本协议，修改后的协议一经公布即生效，继续使用本站服务即视为您同意修改后的协议。</p>
+        </div>
+    </div>
+</div>
+
+<!-- 隐私条款弹窗 -->
+<div class="modal-mask" id="privacyModal">
+    <div class="modal-box">
+        <div class="modal-head">
+            <h3>隐私条款</h3>
+            <button class="modal-close" data-close>×</button>
+        </div>
+        <div class="modal-body">
+            <h4>一、信息收集</h4>
+            <p>本站在您注册账号、使用服务时会收集以下信息：</p>
+            <p>· 注册信息：昵称、邮箱、QQ号（用于获取头像）；</p>
+            <p>· 登录信息：登录时间、IP地址、浏览器User-Agent；</p>
+            <p>· 行为信息：访问日志、留言内容。</p>
+
+            <h4>二、信息使用</h4>
+            <p>收集的信息仅用于以下目的：</p>
+            <p>· 提供账号登录、身份验证与密码找回服务；</p>
+            <p>· 站点安全防护（如登录限流、异常行为检测、防止暴力破解）；</p>
+            <p>· 改善站点体验，优化内容展示；</p>
+            <p>· 在您主动留言时展示您的昵称与头像。</p>
+
+            <h4>三、信息存储与保护</h4>
+            <p>您的密码采用 bcrypt 算法单向加密存储，任何人（包括站长）均无法还原明文。本站采取 Session 指纹绑定、CSRF 防护、IP 黑名单、访问限流等多重安全措施保护您的账号安全。</p>
+
+            <h4>四、信息共享</h4>
+            <p>本站承诺不会向任何第三方出售、出租或共享您的个人信息，但以下情况除外：</p>
+            <p>· 获得您的明确同意；</p>
+            <p>· 根据法律法规或政府部门的强制要求；</p>
+            <p>· 为维护本站的合法权益（如应对攻击行为）。</p>
+
+            <h4>五、Cookie 使用</h4>
+            <p>本站使用 Cookie 维持您的登录状态，Cookie 设置了 HttpOnly 与 SameSite 属性以防止跨站攻击。您可以通过浏览器设置清除 Cookie，但这会影响您的登录状态。</p>
+
+            <h4>六、您的权利</h4>
+            <p>您有权随时查看、修改或删除自己的账号信息。如需注销账号，请通过留言或邮件联系站长处理。</p>
+
+            <h4>七、未成年人保护</h4>
+            <p>本站不针对未满 14 周岁的未成年人提供服务。若您是未成年人，请在监护人陪同下阅读本条款并使用本站。</p>
+
+            <h4>八、条款更新</h4>
+            <p>本站可能根据法律法规或业务需要更新本隐私条款，更新后的条款一经公布即生效。</p>
+        </div>
+    </div>
+</div>
+
+<script>
+const wrap = document.getElementById('mainWrap');
+const tabNav = document.getElementById('tabNav');
+const tabBtns = document.querySelectorAll('.tab-btn');
+const loginBox = document.getElementById('loginBox');
+const registerBox = document.getElementById('registerBox');
+const forgetBox = document.getElementById('forgetBox');
+const pageTitle = document.getElementById('pageTitle');
+const pageSubtitle = document.getElementById('pageSubtitle');
+const forgetBtn = document.getElementById('forgetBtn');
+const backLogin = document.getElementById('backLogin');
+const resetPwdBtn = document.getElementById('resetPwdBtn');
+const sendLoginCodeBtn = document.getElementById('sendLoginCode');
+const sendRegCodeBtn = document.getElementById('sendRegCode');
+const sendForgetCodeBtn = document.getElementById('sendForgetCode');
+
+function saveUser(name, avatar, uid, username) {
+    const userInfo = {
+        uid: parseInt(uid) || 0,
+        nickname: name || '访客',
+        username: username || name || '访客',
+        avatar: avatar || 'img/5.jpg'
+    };
+    localStorage.setItem('siteUser', JSON.stringify(userInfo));
+}
+
+// Tab 切换
+function switchTab(tab) {
+    tabBtns.forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    wrap.classList.toggle('tab-right', tab === 'register');
+    loginBox.classList.toggle('active', tab === 'login');
+    registerBox.classList.toggle('active', tab === 'register');
+    forgetBox.classList.remove('active');
+    tabNav.style.display = 'flex';
+    if (tab === 'login') {
+        pageTitle.textContent = '欢迎回来';
+        pageSubtitle.textContent = '登录账号，继续奇妙旅程';
+    } else {
+        pageTitle.textContent = '加入我们';
+        pageSubtitle.textContent = '注册账号，开启奇妙旅程';
+    }
+}
+tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+});
+
+// 忘记密码
+forgetBtn.addEventListener('click', function(e){
+    e.preventDefault();
+    loginBox.classList.remove('active');
+    registerBox.classList.remove('active');
+    forgetBox.classList.add('active');
+    tabNav.style.display = 'none';
+    pageTitle.textContent = '重置密码';
+    pageSubtitle.textContent = '输入注册邮箱，设置新密码';
+});
+
+// 返回登录
+backLogin.addEventListener('click', function(){
+    switchTab('login');
+});
+
+// 条款弹窗开关
+const userAgreementModal = document.getElementById('userAgreementModal');
+const privacyModal = document.getElementById('privacyModal');
+function openModal(modal){ modal.classList.add('show'); }
+function closeModal(modal){ modal.classList.remove('show'); }
+document.getElementById('openUserAgreement').addEventListener('click', function(e){
+    e.preventDefault();
+    openModal(userAgreementModal);
+});
+document.getElementById('openPrivacy').addEventListener('click', function(e){
+    e.preventDefault();
+    openModal(privacyModal);
+});
+// 关闭按钮 / 点击遮罩关闭
+document.querySelectorAll('.modal-close').forEach(btn => {
+    btn.addEventListener('click', function(){
+        this.closest('.modal-mask').classList.remove('show');
+    });
+});
+document.querySelectorAll('.modal-mask').forEach(mask => {
+    mask.addEventListener('click', function(e){
+        if(e.target === this) this.classList.remove('show');
+    });
+});
+// ESC 关闭
+document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape'){
+        userAgreementModal.classList.remove('show');
+        privacyModal.classList.remove('show');
+    }
+});
+
+function ajaxPost(url, data, callback) {
+    const formData = new FormData();
+    for(let key in data) {
+        formData.append(key, data[key]);
+    }
+    fetch(url, {
+        method: 'POST',
+        body: formData,
+        credentials: 'include'
+    })
+    .then(res => {
+        if(!res.ok) throw new Error('HTTP error ' + res.status);
+        return res.json();
+    })
+    .then(res => callback(res))
+    .catch(() => callback({code: 999, msg: '网络请求失败，请检查服务器'}))
+}
+
+function startCountdown(btn) {
+    let count = 60;
+    btn.disabled = true;
+    btn.classList.add('disabled');
+    btn.innerText = `${count}s后重发`;
+    const timer = setInterval(() => {
+        count--;
+        btn.innerText = `${count}s后重发`;
+        if(count <= 0) {
+            clearInterval(timer);
+            btn.disabled = false;
+            btn.classList.remove('disabled');
+            btn.innerText = '发送验证码';
+        }
+    }, 1000);
+}
+
+// 发送登录验证码
+sendLoginCodeBtn.addEventListener('click', function() {
+    const email = document.getElementById('loginEmail').value.trim();
+    if(!email) { alert('请先输入邮箱'); return; }
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert('邮箱格式不正确'); return; }
+    ajaxPost('send_code.php', {email: email, purpose: 'login'}, function(res) {
+        alert(res.msg);
+        if(res.code === 200) startCountdown(sendLoginCodeBtn);
+    });
+});
+
+// 发送注册验证码
+sendRegCodeBtn.addEventListener('click', function() {
+    const email = document.getElementById('regEmail').value.trim();
+    if(!email) { alert('请先输入邮箱'); return; }
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert('邮箱格式不正确'); return; }
+    ajaxPost('send_code.php', {email: email, purpose: 'register'}, function(res) {
+        alert(res.msg);
+        if(res.code === 200) startCountdown(sendRegCodeBtn);
+    });
+});
+
+// 发送重置密码验证码
+sendForgetCodeBtn.addEventListener('click', function() {
+    const email = document.getElementById('forgetEmail').value.trim();
+    if(!email) { alert('请先输入邮箱'); return; }
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert('邮箱格式不正确'); return; }
+    ajaxPost('send_code.php', {email: email, purpose: 'reset'}, function(res) {
+        alert(res.msg);
+        if(res.code === 200) startCountdown(sendForgetCodeBtn);
+    });
+});
+
+// 登录提交
+document.querySelector('#loginBox .submit-btn').addEventListener('click', function() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const pwd = document.getElementById('loginPwd').value.trim();
+    const code = document.getElementById('loginCode').value.trim();
+    if(!email || !pwd || !code) { alert('邮箱、密码和验证码不能为空'); return; }
+    ajaxPost('login.php', {Email: email, Password: pwd, code: code}, function(res) {
+        alert(res.msg);
+        if(res.code === 200) {
+            const data = res.data || {};
+            const nickname = data.nickname || data.username || '用户';
+            const username = data.username || data.nickname || '用户';
+            const avatar = data.avatar || 'img/5.jpg';
+            const uid = data.uid || 0;
+            saveUser(nickname, avatar, uid, username);
+            location.href = 'index2.html';
+        }
+    });
+});
+
+// 注册提交
+document.querySelector('#registerBox .submit-btn').addEventListener('click', function() {
+    const name = document.getElementById('regName').value.trim();
+    const qq = document.getElementById('regQq').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const pwd = document.getElementById('regPwd').value.trim();
+    const code = document.getElementById('regCode').value.trim();
+    if(!name || !email || !pwd || !code) { alert('用户名、邮箱、密码和验证码不能为空'); return; }
+    if(!document.getElementById('agreeTerms').checked) { alert('请先阅读并同意《用户协议》与《隐私条款》'); return; }
+    const avatar = qq && /^\d+$/.test(qq) ? `https://q1.qlogo.cn/g?b=qq&nk=${qq}&s=640` : 'img/5.jpg';
+    ajaxPost('register.php', {name: name, Email: email, Password: pwd, avatar: avatar, code: code}, function(res) {
+        alert(res.msg);
+        if(res.code === 200) {
+            const data = res.data || {};
+            const uid = data.uid || 0;
+            saveUser(name, avatar, uid, name);
+            location.href = 'index2.html';
+        }
+    });
+});
+
+// QQ 登录跳转
+document.getElementById('qqLoginBtn').addEventListener('click', function(){
+    window.location.href = 'qq_login.php';
+});
+document.getElementById('qqRegisterBtn').addEventListener('click', function(){
+    window.location.href = 'qq_login.php';
+});
+
+// 重置密码
+resetPwdBtn.addEventListener('click', function(){
+    const email = document.getElementById('forgetEmail').value.trim();
+    const code = document.getElementById('forgetCode').value.trim();
+    const newPwd = document.getElementById('newPwd').value.trim();
+    const rePwd = document.getElementById('rePwd').value.trim();
+    if(!email || !code || !newPwd || !rePwd){ alert('邮箱、验证码、新密码、确认密码不能为空'); return; }
+    if(newPwd !== rePwd){ alert('两次输入的新密码不一致'); return; }
+    if(newPwd.length < 6){ alert('密码长度不能少于6位'); return; }
+    ajaxPost('forget_pwd.php', {email: email, code: code, new_pwd: newPwd}, function(res){
+        alert(res.msg);
+        if(res.code === 200) switchTab('login');
+    });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - 页面走丢了 | 真昼小站</title>
+    <link rel="icon" href="img/favicon.png" type="image/jpeg">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(180deg, #faf5ff 0%, #f8faff 50%, #fff 100%);
+            color: #1f2937;
+        }
+        .box { text-align: center; padding: 40px 20px; }
+        .code {
+            font-size: 96px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #b8a0d8, #f78fb3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+        .msg { font-size: 18px; color: #6b7280; margin-top: 12px; }
+        .sub { font-size: 14px; color: #9ca3af; margin-top: 8px; }
+        .btn {
+            display: inline-block;
+            margin-top: 28px;
+            padding: 12px 32px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #b8a0d8, #f78fb3);
+            color: #fff;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 14px rgba(184,160,216,0.4);
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(184,160,216,0.55); }
+        @media (max-width: 480px) { .code { font-size: 72px; } .msg { font-size: 16px; } }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <div class="code">404</div>
+        <div class="msg">页面走丢了 (´；ω；`)</div>
+        <div class="sub">你访问的页面不存在或已被移除</div>
+        <a href="/" class="btn">返回首页</a>
+    </div>
+</body>
+</html>

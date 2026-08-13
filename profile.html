@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>个人中心 - 云蓝小站</title>
+    <link rel="icon" href="img/favicon.png" type="image/jpeg">
+    <link rel="shortcut icon" href="img/favicon.png" type="image/jpeg">
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --blue-main: #2563eb;
+            --blue-light: #60a5fa;
+            --blue-deep: #1d4ed8;
+            --blue-bg: #eff6ff;
+            --blue-line: rgba(37, 99, 235, 0.15);
+            --text-dark: #1e293b;
+            --text-gray: #64748b;
+            --text-light: #94a3b8;
+            --white: #ffffff;
+            --danger: #ef4444;
+            --success: #10b981;
+            --shadow-sm: 0 2px 8px rgba(37, 99, 235, 0.08);
+            --shadow-md: 0 8px 24px rgba(37, 99, 235, 0.12);
+            --shadow-lg: 0 16px 48px rgba(37, 99, 235, 0.16);
+            --radius-sm: 10px;
+            --radius-md: 16px;
+            --radius-lg: 28px;
+            --transition-fast: all 0.15s ease;
+            --transition-normal: all 0.25s ease;
+            --transition-slow: all 0.4s cubic-bezier(0.2,0,0.2,1);
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(180deg, #eff6ff 0%, #f8faff 50%, #ffffff 100%);
+            color: var(--text-dark);
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+            padding-top: max(0px, env(safe-area-inset-top));
+            padding-bottom: max(30px, env(safe-area-inset-bottom));
+        }
+        body::before, body::after {
+            content: "";
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(70px);
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+        body::before {
+            width: 360px;
+            height: 360px;
+            background: rgba(96, 165, 250, 0.25);
+            top: -120px;
+            right: -100px;
+        }
+        body::after {
+            width: 420px;
+            height: 420px;
+            background: rgba(37, 99, 235, 0.12);
+            bottom: -160px;
+            left: -140px;
+        }
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+        button {
+            font-family: inherit;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+        }
+        input {
+            font-family: inherit;
+        }
+        /* 导航栏 */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            backdrop-filter: saturate(180%) blur(24px);
+            -webkit-backdrop-filter: saturate(180%) blur(24px);
+            background: rgba(239, 246, 255, 0.86);
+            border-bottom: 1px solid var(--blue-line);
+            animation: navFadeIn 0.6s ease;
+        }
+        @keyframes navFadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .navbar-inner {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 0 20px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .brand img {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--white);
+            box-shadow: var(--shadow-sm);
+        }
+        .brand-name {
+            font-weight: 700;
+            font-size: 17px;
+            color: var(--blue-deep);
+        }
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            border-radius: var(--radius-sm);
+            color: var(--text-gray);
+            font-size: 14px;
+            transition: var(--transition-normal);
+        }
+        .nav-back:hover {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--blue-main);
+        }
+        /* 主容器 */
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            position: relative;
+            z-index: 1;
+            animation: pageFadeIn 0.7s ease;
+        }
+        @keyframes pageFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* 用户资料主卡片 */
+        .profile-card {
+            background: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(26px) saturate(190%);
+            -webkit-backdrop-filter: blur(26px) saturate(190%);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            padding: 32px 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 26px;
+            transition: var(--transition-normal);
+        }
+        .profile-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-lg);
+        }
+        .profile-avatar {
+            width: 104px;
+            height: 104px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--white);
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.24);
+            margin-bottom: 10px;
+            background: #f1f5f9;
+            transition: var(--transition-normal);
+        }
+        .profile-avatar:hover {
+            transform: scale(1.05);
+        }
+        .profile-qqname {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        .profile-qqid {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 18px;
+        }
+        .profile-meta {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 6px;
+        }
+        .meta-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            padding: 14px 18px;
+            border-radius: var(--radius-md);
+            background: rgba(255, 255, 255, 0.65);
+            border: 1px solid var(--blue-line);
+            transition: var(--transition-normal);
+        }
+        .meta-row:hover {
+            background: rgba(37, 99, 235, 0.06);
+        }
+        .meta-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: var(--text-gray);
+        }
+        .meta-label i {
+            color: var(--blue-main);
+            width: 18px;
+            text-align: center;
+            font-size: 16px;
+        }
+        .meta-value {
+            font-size: 14px;
+            color: var(--text-dark);
+            font-weight: 500;
+            max-width: 62%;
+            text-align: right;
+            word-break: break-all;
+        }
+        .meta-btn {
+            padding: 5px 12px;
+            font-size: 12px;
+            border-radius: var(--radius-sm);
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--blue-main);
+            transition: var(--transition-fast);
+        }
+        .meta-btn:hover {
+            background: var(--blue-main);
+            color: #fff;
+        }
+        /* 功能模块卡片通用 */
+        .section-card {
+            background: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(26px) saturate(190%);
+            -webkit-backdrop-filter: blur(26px) saturate(190%);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            padding: 28px;
+            margin-bottom: 24px;
+            transition: var(--transition-normal);
+        }
+        .section-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--blue-deep);
+            margin-bottom: 22px;
+        }
+        .section-title i {
+            color: var(--blue-main);
+            font-size: 18px;
+        }
+        .field {
+            margin-bottom: 20px;
+        }
+        .field:last-child {
+            margin-bottom: 0;
+        }
+        .field-label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-gray);
+            margin-bottom: 8px;
+        }
+        .input-wrap {
+            position: relative;
+        }
+        .input-wrap input {
+            width: 100%;
+            padding: 14px 46px 14px 16px;
+            font-size: 15px;
+            color: var(--text-dark);
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid var(--blue-line);
+            border-radius: var(--radius-md);
+            outline: none;
+            transition: var(--transition-normal);
+        }
+        .input-wrap input:focus {
+            border-color: var(--blue-light);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+            background: #fff;
+        }
+        .toggle-eye {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30px;
+            height: 30px;
+            display: grid;
+            place-items: center;
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 16px;
+            transition: var(--transition-fast);
+        }
+        .toggle-eye:hover {
+            color: var(--blue-main);
+        }
+        /* 按钮样式 */
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: var(--radius-md);
+            font-size: 15px;
+            font-weight: 600;
+            transition: var(--transition-fast);
+            border: none;
+        }
+        .btn:active {
+            transform: scale(0.97);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: #fff;
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.32);
+        }
+        .btn-primary:hover {
+            opacity: 0.93;
+            box-shadow: 0 8px 26px rgba(37, 99, 235, 0.38);
+        }
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.08);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.28);
+        }
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.14);
+        }
+        .btn-sm {
+            width: auto;
+            padding: 9px 20px;
+            font-size: 14px;
+        }
+        /* 弹窗遮罩 */
+        .modal-mask {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            backdrop-filter: blur(6px);
+            z-index: 998;
+            display: grid;
+            place-items: center;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition-normal);
+        }
+        .modal-mask.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .modal-box {
+            width: 100%;
+            max-width: 520px;
+            background: #fff;
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+            transform: scale(0.92) translateY(12px);
+            transition: var(--transition-slow);
+        }
+        .modal-mask.show .modal-box {
+            transform: scale(1) translateY(0);
+        }
+        .modal-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            color: var(--text-light);
+            transition: var(--transition-fast);
+        }
+        .modal-close:hover {
+            background: var(--blue-bg);
+            color: var(--blue-main);
+        }
+        .modal-btn-group {
+            display: flex;
+            gap: 14px;
+            margin-top: 26px;
+        }
+        .modal-btn-group .btn {
+            flex: 1;
+        }
+        /* Toast提示 */
+        .toast {
+            position: fixed;
+            top: 32%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: rgba(239, 246, 255, 0.96);
+            backdrop-filter: blur(22px);
+            border: 1px solid var(--blue-light);
+            border-radius: var(--radius-md);
+            padding: 16px 30px;
+            box-shadow: var(--shadow-lg);
+            color: var(--blue-deep);
+            font-size: 14px;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.28s ease, transform 0.28s cubic-bezier(0.2,0,0.2,1);
+            text-align: center;
+            max-width: 85vw;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        .toast.err {
+            background: rgba(254, 242, 242, 0.96);
+            border-color: #fca5a5;
+            color: #b91c1c;
+        }
+        .toast.success {
+            background: rgba(240, 253, 244, 0.96);
+            border-color: #6ee7b7;
+            color: #047857;
+        }
+        /* 加载状态 */
+        .loading {
+            text-align: center;
+            color: var(--text-light);
+            padding: 70px 0;
+            font-size: 15px;
+        }
+        .loading i {
+            color: var(--blue-main);
+            font-size: 22px;
+            margin-bottom: 12px;
+            display: block;
+        }
+        /* 响应式适配手机 */
+        @media (max-width: 440px) {
+            .container {
+                padding: 24px 16px;
+            }
+            .profile-card, .section-card {
+                padding: 24px 20px;
+            }
+            .profile-avatar {
+                width: 90px;
+                height: 90px;
+            }
+            .profile-qqname {
+                font-size: 22px;
+            }
+            .modal-box {
+                padding: 24px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <a class="brand" href="index2.html">
+                <img src="img/5.jpg" alt="站点头像">
+                <span class="brand-name">云蓝小站</span>
+            </a>
+            <a class="nav-back" href="index2.html">
+                <i class="fas fa-chevron-left"></i><span>返回首页</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- 用户信息卡片容器 -->
+        <div id="profileBox">
+            <div class="loading">
+                <i class="fas fa-spinner fa-pulse"></i>
+                个人信息加载中...
+            </div>
+        </div>
+
+        <!-- QQ绑定模块 -->
+        <div class="section-card" id="qqBindCard" style="display: none;">
+            <div class="section-title"><i class="fab fa-qq"></i> QQ账号绑定</div>
+            <div id="qqBindContent"></div>
+        </div>
+
+        <!-- 邮箱换绑模块 -->
+        <div class="section-card" id="emailCard" style="display: none;">
+            <div class="section-title"><i class="fas fa-envelope"></i> 邮箱管理</div>
+            <p style="color:var(--text-gray);font-size:14px;margin-bottom:20px;">当前绑定邮箱：<span id="currEmail">未绑定</span></p>
+            <button class="btn btn-primary btn-sm" id="openEmailModal">更换绑定邮箱</button>
+        </div>
+
+        <!-- 修改密码模块 -->
+        <div class="section-card" id="pwdCard" style="display:none;">
+            <div class="section-title"><i class="fas fa-key"></i> 修改登录密码</div>
+            <form id="pwdForm" autocomplete="off">
+                <div class="field">
+                    <label class="field-label" for="oldPwd">原登录密码</label>
+                    <div class="input-wrap">
+                        <input type="password" id="oldPwd" maxlength="64" placeholder="请输入当前密码" required>
+                        <span class="toggle-eye" data-target="oldPwd"><i class="fas fa-eye"></i></span>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="field-label" for="newPwd">新密码</label>
+                    <div class="input-wrap">
+                        <input type="password" id="newPwd" maxlength="64" placeholder="6-64位字母/数字组合" required>
+                        <span class="toggle-eye" data-target="newPwd"><i class="fas fa-eye"></i></span>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="field-label" for="confirmPwd">确认新密码</label>
+                    <div class="input-wrap">
+                        <input type="password" id="confirmPwd" maxlength="64" placeholder="再次输入新密码" required>
+                        <span class="toggle-eye" data-target="confirmPwd"><i class="fas fa-eye"></i></span>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" id="pwdSubmit">确认更新密码</button>
+            </form>
+        </div>
+
+        <!-- 退出账号模块 -->
+        <div class="section-card" id="logoutCard" style="display:none;text-align:center;">
+            <div class="section-title"><i class="fas fa-sign-out-alt"></i> 账号安全</div>
+            <button class="btn btn-danger" id="openLogoutModal">退出当前登录账号</button>
+        </div>
+    </div>
+
+    <!-- 邮箱换绑弹窗 -->
+    <div class="modal-mask" id="emailModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h3 class="modal-title">更换绑定邮箱</h3>
+                <button class="modal-close" id="closeEmailModal"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="emailForm">
+                <div class="field">
+                    <label class="field-label">新邮箱地址</label>
+                    <div class="input-wrap">
+                        <input type="email" id="newEmail" placeholder="example@qq.com" required>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="field-label">邮箱验证码</label>
+                    <div class="input-wrap" style="display:flex;gap:10px;">
+                        <input type="text" id="emailCode" placeholder="6位数字验证码" style="flex:1;">
+                        <button type="button" class="btn btn-primary btn-sm" id="sendEmailCode">获取验证码</button>
+                    </div>
+                </div>
+                <div class="modal-btn-group">
+                    <button type="button" class="btn" id="cancelEmail">取消</button>
+                    <button type="submit" class="btn btn-primary" id="submitEmail">确认换绑</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 退出确认弹窗 -->
+    <div class="modal-mask" id="logoutModal">
+        <div class="modal-box">
+            <div class="modal-head">
+                <h3 class="modal-title">退出账号确认</h3>
+                <button class="modal-close" id="closeLogoutModal"><i class="fas fa-times"></i></button>
+            </div>
+            <p style="color:var(--text-gray);margin-bottom:12px;">退出后需要重新登录才能访问个人中心</p>
+            <div class="modal-btn-group">
+                <button type="button" class="btn" id="cancelLogout">取消</button>
+                <button type="button" class="btn btn-danger" id="confirmLogout">确认退出</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast消息提示 -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // 全局元素
+        const toast = document.getElementById('toast');
+        const emailModal = document.getElementById('emailModal');
+        const logoutModal = document.getElementById('logoutModal');
+
+        // QQ绑定结果提示（从URL参数读取）
+        (function(){
+            const params = new URLSearchParams(location.search);
+            const bindSuccess = params.get('qq_bind_success');
+            const bindError = params.get('qq_bind_error');
+            if(bindSuccess) {
+                setTimeout(()=> showToast('QQ绑定成功', 'success'), 500);
+            } else if(bindError) {
+                const errMsgs = {
+                    'config': 'QQ登录未配置',
+                    'disabled': 'QQ登录未开启',
+                    'auth': '请先登录后再绑定QQ',
+                    'cancelled': 'QQ授权已取消',
+                    'param': '回调参数异常',
+                    'state': '安全校验失败，请重试',
+                    'network': '网络连接异常',
+                    'token': 'QQ授权失败',
+                    'openid': '获取QQ信息失败',
+                    'occupied': '该QQ已绑定其他账号',
+                    'db': '绑定失败，请稍后重试'
+                };
+                setTimeout(()=> showToast(errMsgs[bindError] || '绑定失败', 'err'), 500);
+            }
+            // 清除URL参数
+            if(bindSuccess || bindError) {
+                history.replaceState(null, '', location.pathname);
+            }
+        })();
+
+        // Toast提示封装
+        function showToast(msg, type = 'normal') {
+            toast.textContent = msg;
+            toast.className = 'toast show';
+            if(type === 'err') toast.classList.add('err');
+            if(type === 'success') toast.classList.add('success');
+            clearTimeout(showToast._timer);
+            showToast._timer = setTimeout(()=>{
+                toast.classList.remove('show');
+            }, 2400);
+        }
+
+        // 通用AJAX POST请求
+        function ajaxPost(url, data, callback) {
+            const fd = new FormData();
+            for(let key in data) fd.append(key, data[key]);
+            fetch(url, {
+                method: 'POST',
+                body: fd,
+                credentials: 'include'
+            })
+            .then(res => res.json())
+            .then(callback)
+            .catch(()=> callback({code:500, msg:'网络连接异常，请稍后重试'}));
+        }
+
+        // 登录校验
+        const localUser = localStorage.getItem('siteUser');
+        if(!localUser) location.replace('Login.html');
+
+        // 加载用户基础资料
+        fetch('get_profile.php', { credentials: 'include' })
+        .then(res => res.json())
+        .then(res => {
+            // 未登录跳转
+            if(res.code === 401) {
+                localStorage.removeItem('siteUser');
+                location.replace('Login.html');
+                return;
+            }
+            if(res.code !== 200) {
+                document.getElementById('profileBox').innerHTML = `<div class="loading">${res.msg || '信息加载失败'}</div>`;
+                return;
+            }
+            const d = res.data || {};
+            // 用户数据赋值
+            const avatar = d.avatar || 'img/5.jpg';
+            const nickname = d.nickname || d.qq_name || '匿名用户';
+            const qqId = d.qq_id || '';
+            const userEmail = d.email || '未绑定';
+            const createTime = d.create_time ? d.create_time.slice(0,10) : '未知';
+            const isQQBind = !!d.qq_id && d.qq_id !== '';
+
+            // 渲染顶部资料卡片
+            document.getElementById('profileBox').innerHTML = `
+                <div class="profile-card">
+                    <img class="profile-avatar" src="${avatar}" alt="头像" onerror="this.src='img/5.jpg'">
+                    <div class="profile-qqname">${nickname}</div>
+                    <div class="profile-qqid">QQ状态：${isQQBind ? '已绑定' : '未绑定'}</div>
+                    <div class="profile-meta">
+                        <div class="meta-row">
+                            <span class="meta-label"><i class="fas fa-envelope"></i> 绑定邮箱</span>
+                            <div style="display:flex;align-items:center;gap:8px;">
+                                <span class="meta-value">${userEmail}</span>
+                                <button class="meta-btn" id="quickOpenEmail">修改</button>
+                            </div>
+                        </div>
+                        <div class="meta-row">
+                            <span class="meta-label"><i class="fab fa-qq"></i> QQ绑定</span>
+                            <span class="meta-value">${isQQBind ? '已绑定' : '未绑定'}</span>
+                        </div>
+                        <div class="meta-row">
+                            <span class="meta-label"><i class="fas fa-calendar-day"></i> 账号创建时间</span>
+                            <span class="meta-value">${createTime}</span>
+                        </div>
+                    </div>
+                </div>`;
+
+            // 点击快速打开邮箱弹窗
+            document.getElementById('quickOpenEmail').addEventListener('click', ()=>{
+                emailModal.classList.add('show');
+            })
+
+            // 显示全部功能模块
+            document.getElementById('qqBindCard').style.display = 'block';
+            document.getElementById('emailCard').style.display = 'block';
+            document.getElementById('pwdCard').style.display = 'block';
+            document.getElementById('logoutCard').style.display = 'block';
+
+            // 渲染QQ绑定区域
+            const qqContent = document.getElementById('qqBindContent');
+            if(isQQBind) {
+                qqContent.innerHTML = `
+                    <p style="color:var(--success);margin-bottom:16px;"><i class="fas fa-check-circle"></i> 已绑定QQ账号</p>
+                    <button class="btn btn-danger btn-sm" id="unbindQQ">解除QQ绑定</button>`;
+                // 解绑QQ事件
+                document.getElementById('unbindQQ').addEventListener('click', ()=>{
+                    if(!confirm('确定解除当前QQ绑定？解绑后无法使用QQ快捷登录')) return;
+                    ajaxPost('unbind_qq.php', {}, res=>{
+                        if(res.code === 200) {
+                            showToast('QQ解绑成功', 'success');
+                            location.reload();
+                        } else showToast(res.msg, 'err');
+                    })
+                })
+            } else {
+                qqContent.innerHTML = `
+                    <p style="color:var(--text-gray);margin-bottom:16px;">暂未绑定QQ，绑定后可一键快捷登录账号</p>
+                    <button class="btn btn-primary btn-sm" id="bindQQ">前往绑定QQ</button>`;
+                // 绑定QQ跳转
+                document.getElementById('bindQQ').addEventListener('click', ()=>{
+                    location.href = 'qq_bind.php';
+                })
+            }
+            // 更新页面邮箱显示
+            document.getElementById('currEmail').innerText = userEmail;
+        })
+        .catch(()=>{
+            document.getElementById('profileBox').innerHTML = '<div class="loading">网络异常，请刷新页面重试</div>';
+        })
+
+        // 密码显隐切换
+        document.querySelectorAll('.toggle-eye').forEach(eye=>{
+            eye.addEventListener('click', function(){
+                const input = document.getElementById(this.dataset.target);
+                const icon = this.querySelector('i');
+                if(input.type === 'password') {
+                    input.type = 'text';
+                    icon.className = 'fas fa-eye-slash';
+                } else {
+                    input.type = 'password';
+                    icon.className = 'fas fa-eye';
+                }
+            })
+        })
+
+        // 修改密码表单提交
+        const pwdForm = document.getElementById('pwdForm');
+        const pwdSubmit = document.getElementById('pwdSubmit');
+        pwdForm.addEventListener('submit', e=>{
+            e.preventDefault();
+            const old = document.getElementById('oldPwd').value.trim();
+            const newP = document.getElementById('newPwd').value.trim();
+            const confirm = document.getElementById('confirmPwd').value.trim();
+
+            if(!old || !newP || !confirm) return showToast('请完整填写所有密码项', 'err');
+            if(newP.length <6) return showToast('新密码至少6位字符', 'err');
+            if(newP.length >64) return showToast('密码最长64位', 'err');
+            if(newP !== confirm) return showToast('两次新密码输入不一致', 'err');
+            if(newP === old) return showToast('新密码不能和原密码相同', 'err');
+
+            pwdSubmit.disabled = true;
+            pwdSubmit.innerText = '提交处理中...';
+            ajaxPost('change_password.php', {old_pwd:old, new_pwd:newP}, res=>{
+                pwdSubmit.disabled = false;
+                pwdSubmit.innerText = '确认更新密码';
+                if(res.code === 200) {
+                    showToast('密码修改成功，请重新登录', 'success');
+                    pwdForm.reset();
+                    localStorage.removeItem('siteUser');
+                    setTimeout(()=> location.replace('Login.html'),1800);
+                } else if(res.code === 401) {
+                    showToast('登录失效，请重新登录', 'err');
+                    localStorage.removeItem('siteUser');
+                    setTimeout(()=> location.replace('Login.html'),1200);
+                } else showToast(res.msg, 'err');
+            })
+        })
+
+        // 邮箱弹窗控制
+        document.getElementById('openEmailModal').onclick = ()=> emailModal.classList.add('show');
+        document.getElementById('closeEmailModal').onclick = ()=> emailModal.classList.remove('show');
+        document.getElementById('cancelEmail').onclick = ()=> emailModal.classList.remove('show');
+        // 遮罩点击关闭弹窗
+        emailModal.addEventListener('click', e=>{
+            if(e.target === emailModal) emailModal.classList.remove('show');
+        })
+
+        // 邮箱验证码倒计时
+        let emailCodeTimer = null;
+        const sendCodeBtn = document.getElementById('sendEmailCode');
+        sendCodeBtn.addEventListener('click', ()=>{
+            const mail = document.getElementById('newEmail').value.trim();
+            if(!mail || !/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(mail)) {
+                return showToast('请输入合法邮箱地址', 'err');
+            }
+            sendCodeBtn.disabled = true;
+            let sec = 60;
+            sendCodeBtn.innerText = `${sec}s后重发`;
+            ajaxPost('send_email_code.php', {email:mail}, res=>{
+                if(res.code !== 200) {
+                    showToast(res.msg, 'err');
+                    sendCodeBtn.disabled = false;
+                    sendCodeBtn.innerText = '获取验证码';
+                    return;
+                }
+                showToast('验证码已发送至邮箱', 'success');
+                emailCodeTimer = setInterval(()=>{
+                    sec--;
+                    sendCodeBtn.innerText = `${sec}s后重发`;
+                    if(sec <=0) {
+                        clearInterval(emailCodeTimer);
+                        sendCodeBtn.disabled = false;
+                        sendCodeBtn.innerText = '获取验证码';
+                    }
+                },1000)
+            })
+        })
+
+        // 换绑邮箱提交
+        document.getElementById('emailForm').addEventListener('submit', e=>{
+            e.preventDefault();
+            const newMail = document.getElementById('newEmail').value.trim();
+            const code = document.getElementById('emailCode').value.trim();
+            if(!newMail || !code) return showToast('请填写邮箱与验证码', 'err');
+            ajaxPost('bind_email.php', {email:newMail, code:code}, res=>{
+                if(res.code === 200) {
+                    showToast('邮箱换绑成功', 'success');
+                    emailModal.classList.remove('show');
+                    setTimeout(()=> location.reload(),1000);
+                } else showToast(res.msg, 'err');
+            })
+        })
+
+        // 退出账号弹窗控制
+        document.getElementById('openLogoutModal').onclick = ()=> logoutModal.classList.add('show');
+        document.getElementById('closeLogoutModal').onclick = ()=> logoutModal.classList.remove('show');
+        document.getElementById('cancelLogout').onclick = ()=> logoutModal.classList.remove('show');
+        logoutModal.addEventListener('click', e=>{
+            if(e.target === logoutModal) logoutModal.classList.remove('show');
+        })
+
+        // 确认退出登录
+        document.getElementById('confirmLogout').addEventListener('click', ()=>{
+            fetch('logout.php', {credentials:'include'})
+            .catch(()=> ({code:200}))
+            .then(()=>{
+                localStorage.removeItem('siteUser');
+                location.replace('index2.html');
+            })
+        })
+    </script>
+</body>
+</html>
